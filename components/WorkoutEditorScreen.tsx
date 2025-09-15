@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -56,7 +55,7 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
                 if (!ex.name.trim()) newErrors[`${keyPrefix}-name`] = "El nombre no puede estar vacío.";
                 if (ex.sets <= 0 || !Number.isInteger(ex.sets)) newErrors[`${keyPrefix}-sets`] = "Debe ser un número entero positivo.";
                 if (!ex.reps.trim()) newErrors[`${keyPrefix}-reps`] = "Las repeticiones no pueden estar vacías.";
-                if (ex.rest < 0 || !Number.isInteger(ex.rest)) newErrors[`${keyPrefix}-rest`] = "Debe ser un número entero no negativo.";
+                if (ex.rest <= 0 || !Number.isInteger(ex.rest)) newErrors[`${keyPrefix}-rest`] = "Debe ser un número entero positivo.";
             });
         });
 
