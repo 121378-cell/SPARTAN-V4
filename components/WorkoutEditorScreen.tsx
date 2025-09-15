@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -123,6 +124,15 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
                                                     <div className="space-y-2">
                                                         <Label htmlFor={`exEquip-${dayIndex}-${exIndex}`}>Equipamiento</Label>
                                                         <Input id={`exEquip-${dayIndex}-${exIndex}`} value={exercise.equipment} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'equipment', e.target.value)} />
+                                                    </div>
+                                                    <div className="space-y-2 col-span-2">
+                                                        <Label htmlFor={`exNotes-${dayIndex}-${exIndex}`}>Notas (Opcional)</Label>
+                                                        <Input 
+                                                            id={`exNotes-${dayIndex}-${exIndex}`} 
+                                                            value={exercise.notes || ''} 
+                                                            onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'notes', e.target.value)}
+                                                            placeholder="Ej: Enfocarse en la fase excéntrica"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
