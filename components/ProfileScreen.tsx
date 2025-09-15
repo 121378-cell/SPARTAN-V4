@@ -90,6 +90,23 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                         </div>
 
                         <div className="mt-4 space-y-2">
+                            <Label>Días de Entrenamiento por Semana</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {([1, 2, 3, 4, 5, 6] as const).map(days => (
+                                    <Button
+                                        key={days}
+                                        variant={userData.trainingDays === days ? 'default' : 'secondary'}
+                                        size="sm"
+                                        className="rounded-full"
+                                        onClick={() => setUserData({ ...userData, trainingDays: days })}
+                                    >
+                                        {days}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="mt-4 space-y-2">
                             <Label>Objetivos de Fitness</Label>
                             <div className="flex flex-wrap gap-2">
                                 {['Pérdida de Peso', 'Ganancia Muscular', 'Resistencia', 'Flexibilidad', 'Fuerza'].map(goal => (

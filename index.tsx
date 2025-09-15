@@ -31,6 +31,7 @@ export default function App() {
     height: 180,
     fitnessLevel: 'intermediate',
     goals: ['Ganancia Muscular', 'Fuerza'],
+    trainingDays: 3,
   });
 
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);

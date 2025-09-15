@@ -23,6 +23,7 @@ export type UserData = {
   height: number;
   fitnessLevel: TrainingLevel;
   goals: string[];
+  trainingDays: TrainingDays;
 };
 
 // FIX: Added ProgressData type based on usage in Dashboard.tsx.
