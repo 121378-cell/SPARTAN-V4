@@ -1,9 +1,12 @@
 
+
 "use client";
 
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea } from "./ui";
-import { Dumbbell, Gauge, MoveRight, AlertTriangle } from "lucide-react";
+import { Dumbbell, Gauge, MoveRight, AlertTriangle, Star } from "lucide-react";
 import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays } from "../lib/types";
+// FIX: Import Dispatch and SetStateAction to correctly type the setGoals prop.
+import type { Dispatch, SetStateAction } from "react";
 
 interface GeneratorFormProps {
     level: TrainingLevel;
@@ -18,12 +21,23 @@ interface GeneratorFormProps {
     setInjuryHistory: (history: InjuryHistory) => void;
     previousProgress: string;
     setPreviousProgress: (progress: string) => void;
+    primaryGoal: string;
+    setPrimaryGoal: (goal: string) => void;
     goals: Record<string, boolean>;
-    setGoals: (goals: Record<string, boolean>) => void;
+    // FIX: Correctly type setGoals to allow functional updates.
+    setGoals: Dispatch<SetStateAction<Record<string, boolean>>>;
     isGenerating: boolean;
     formErrors: Record<string, string>;
     onGenerate: () => void;
 }
+
+const goalLabels: Record<string, string> = {
+    strength: 'Fuerza',
+    hypertrophy: 'Hipertrofia',
+    definition: 'Definición',
+    mobility: 'Movilidad',
+    endurance: 'Resistencia',
+};
 
 export default function GeneratorForm({
     level, setLevel,
@@ -32,12 +46,22 @@ export default function GeneratorForm({
     equipment, setEquipment,
     injuryHistory, setInjuryHistory,
     previousProgress, setPreviousProgress,
+    primaryGoal, setPrimaryGoal,
     goals, setGoals,
     formErrors,
     isGenerating, onGenerate
 }: GeneratorFormProps) {
 
+    const handlePrimaryGoalSelect = (goal: string) => {
+        setPrimaryGoal(goal);
+        // Deselect from secondary if it's there
+        if (goals[goal]) {
+            setGoals(prev => ({ ...prev, [goal]: false }));
+        }
+    };
+
     const toggleGoal = (goal: string) => {
+        if (goal === primaryGoal) return; // Prevent selecting primary as secondary
         setGoals({ ...goals, [goal]: !goals[goal] });
     };
 
@@ -51,7 +75,7 @@ export default function GeneratorForm({
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Gauge className="h-5 w-5" />
-                        Nivel y Objetivos
+                        Nivel y Disponibilidad
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -65,8 +89,9 @@ export default function GeneratorForm({
                                     variant={level === lvl ? 'default' : 'outline'}
                                     size="default"
                                     onClick={() => setLevel(lvl)}
+                                    className="capitalize"
                                 >
-                                    {lvl.charAt(0).toUpperCase() + lvl.slice(1)}
+                                    {lvl === 'beginner' ? 'Principiante' : lvl === 'intermediate' ? 'Intermedio' : 'Avanzado'}
                                 </Button>
                             ))}
                         </div>
@@ -101,7 +126,7 @@ export default function GeneratorForm({
                                     onClick={() => setTrainingLocation(loc)}
                                     className="capitalize"
                                 >
-                                    {loc}
+                                   {loc === 'gym' ? 'Gimnasio' : loc === 'home' ? 'Casa' : 'Aire Libre'}
                                 </Button>
                             ))}
                         </div>
@@ -109,11 +134,35 @@ export default function GeneratorForm({
                 </CardContent>
             </Card>
 
+             <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Star className="h-5 w-5" />
+                        Objetivo Principal
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                     <div className="flex gap-2 flex-wrap">
+                        {Object.keys(goals).map((goal) => (
+                            <Button
+                                key={goal}
+                                variant={primaryGoal === goal ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => handlePrimaryGoalSelect(goal)}
+                            >
+                                {goalLabels[goal]}
+                            </Button>
+                        ))}
+                    </div>
+                    {formErrors.primaryGoal && <p className="text-sm text-red-600 mt-1">{formErrors.primaryGoal}</p>}
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Dumbbell className="h-5 w-5" />
-                        Objetivos de Entrenamiento
+                        Objetivos Secundarios
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -124,8 +173,9 @@ export default function GeneratorForm({
                                 size="sm"
                                 onClick={() => toggleGoal(goal)}
                                 className="capitalize w-28 text-left justify-start"
+                                disabled={goal === primaryGoal}
                             >
-                                {goal}
+                                {goalLabels[goal]}
                             </Button>
                             <span className="text-sm text-muted-foreground">
                                 {selected && (

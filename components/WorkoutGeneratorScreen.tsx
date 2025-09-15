@@ -34,9 +34,10 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
     injuries: ''
   });
   const [previousProgress, setPreviousProgress] = useState<string>('');
+  const [primaryGoal, setPrimaryGoal] = useState<string>('hypertrophy');
   const [goals, setGoals] = useState<Record<string, boolean>>({
     strength: true,
-    hypertrophy: true,
+    hypertrophy: false,
     definition: false,
     mobility: true,
     endurance: false
@@ -69,8 +70,8 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       .map(([goal]) => goal);
     
     const newErrors: Record<string, string> = {};
-    if (activeGoals.length === 0) {
-        newErrors.goals = "Por favor, selecciona al menos un objetivo de entrenamiento.";
+    if (!primaryGoal) {
+        newErrors.primaryGoal = "Por favor, selecciona un objetivo principal.";
     }
     if (injuryHistory.hasInjuries && !injuryHistory.injuries.trim()) {
         newErrors.injuries = "Por favor, describe tus lesiones para continuar.";
@@ -91,6 +92,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
         equipment,
         injuryHistory,
         previousProgress,
+        primaryGoal,
         goals: activeGoals
       });
       if (isMounted.current) {
@@ -123,6 +125,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
     equipment, setEquipment,
     injuryHistory, setInjuryHistory,
     previousProgress, setPreviousProgress,
+    primaryGoal, setPrimaryGoal,
     goals, setGoals,
     isGenerating: isGeneratingState,
     formErrors,

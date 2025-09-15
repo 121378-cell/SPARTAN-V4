@@ -31,7 +31,8 @@ export default function App() {
     weight: 75,
     height: 180,
     fitnessLevel: 'intermediate',
-    goals: ['Ganancia Muscular', 'Fuerza'],
+    goals: ['Fuerza'],
+    primaryGoal: 'Ganancia Muscular',
     trainingDays: 3,
     notificationSettings: {
       workouts: true,

@@ -31,6 +31,7 @@ export type UserData = {
   height: number;
   fitnessLevel: TrainingLevel;
   goals: string[];
+  primaryGoal: string;
   trainingDays: TrainingDays;
   notificationSettings: NotificationSettings;
 };

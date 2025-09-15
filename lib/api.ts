@@ -8,6 +8,7 @@ interface GenerationParams {
     equipment: Equipment;
     injuryHistory: InjuryHistory;
     previousProgress: string;
+    primaryGoal: string;
     goals: string[];
 }
 
@@ -24,24 +25,27 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
         ? `El usuario tiene las siguientes lesiones a considerar: ${params.injuryHistory.injuries}. Por favor, proporciona alternativas seguras y modificaciones.`
         : 'El usuario no ha reportado lesiones.';
 
+    const secondaryGoals = params.goals.length > 0 ? `El plan también debe incorporar los siguientes objetivos secundarios: ${params.goals.join(', ')}.` : 'No se han especificado objetivos secundarios.';
+
     const prompt = `
-        Eres un entrenador personal y preparador físico certificado de clase mundial. Tu tarea es crear un plan de entrenamiento de varios días, altamente personalizado, basado en el perfil detallado del usuario.
+        Eres un entrenador personal y preparador físico certificado de clase mundial. Tu tarea es crear un plan de entrenamiento de varios días, altamente personalizado, basado en el perfil detallado del usuario, con un fuerte énfasis en su objetivo principal.
 
         Perfil del Usuario:
         - Nivel de Condición Física: ${params.level}
         - Días de Entrenamiento por Semana: ${params.availableDays}
         - Lugar Principal de Entrenamiento: ${params.trainingLocation}
         - Equipamiento Disponible: ${availableEquipment}
-        - Objetivos Principales de Fitness: ${params.goals.join(', ')}
+        - Objetivo Principal: ${params.primaryGoal}. Este es el enfoque más importante y debe ser la prioridad del plan.
+        - Objetivos Secundarios de Fitness: ${secondaryGoals}
         - Historial de Lesiones: ${injuryInfo}
         - Progreso/Historial Previo: ${params.previousProgress || 'No se ha proporcionado progreso previo.'}
 
         Instrucciones:
-        1.  Crea un plan de entrenamiento completo para el número de días especificado.
+        1.  Diseña un plan de entrenamiento completo donde la mayoría de los días y ejercicios contribuyan directamente al Objetivo Principal.
         2.  Cada día debe tener un enfoque claro (ej: Empuje, Tirón, Piernas, Cuerpo Completo, Tren Superior, Tren Inferior, Recuperación Activa).
         3.  Para cada ejercicio, especifica el nombre, número de series, rango de repeticiones (ej: "8-12"), período de descanso en segundos y equipamiento requerido.
         4.  Si el usuario tiene lesiones, incluye notas específicas o ejercicios alternativos para garantizar la seguridad. Por ejemplo, si tiene una lesión de rodilla, sugiere sentadillas a un cajón en lugar de sentadillas profundas.
-        5.  El nombre y la descripción del plan deben ser motivadores y reflejar los objetivos del usuario.
+        5.  El nombre y la descripción del plan deben ser motivadores y reflejar los objetivos del usuario, especialmente el principal.
         6.  La selección de ejercicios debe ser apropiada para el nivel del usuario, sus objetivos y el equipamiento disponible.
         7.  Devuelve la respuesta como un único objeto JSON que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
