@@ -23,6 +23,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
   
   const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string[]>([]);
+  const [mealType, setMealType] = useState<'any' | 'breakfast' | 'lunch' | 'dinner' | 'snack'>('any');
   const [generatedRecipes, setGeneratedRecipes] = useState<Recipe[]>([]);
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -62,6 +63,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
             macroGoals,
             dietaryPreferences,
             allergies,
+            mealType,
         });
 
         if (isMounted.current) {
@@ -190,6 +192,28 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                 <CardTitle>Preferencias</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                 <div className="space-y-2">
+                    <Label>Tipo de Comida</Label>
+                    <div className="flex flex-wrap gap-2">
+                        {(['any', 'breakfast', 'lunch', 'dinner', 'snack'] as const).map(type => (
+                            <Button
+                                key={type}
+                                variant={mealType === type ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setMealType(type)}
+                                className="capitalize"
+                            >
+                                {{
+                                    'any': 'Cualquiera',
+                                    'breakfast': 'Desayuno',
+                                    'lunch': 'Almuerzo',
+                                    'dinner': 'Cena',
+                                    'snack': 'Snack'
+                                }[type]}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
                 <div className="space-y-2">
                   <Label>Dieta</Label>
                   <div className="flex flex-wrap gap-2">

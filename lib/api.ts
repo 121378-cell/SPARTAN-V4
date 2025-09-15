@@ -175,6 +175,7 @@ interface RecipeGenerationParams {
     macroGoals: MacroGoals;
     dietaryPreferences: string[];
     allergies: string[];
+    mealType: 'any' | 'breakfast' | 'lunch' | 'dinner' | 'snack';
 }
 
 // Omit id because it will be generated client-side
@@ -183,6 +184,9 @@ export const generateRecipesApi = async (params: RecipeGenerationParams): Promis
 
     const preferences = params.dietaryPreferences.length > 0 ? `Preferencias dietéticas: ${params.dietaryPreferences.join(', ')}.` : '';
     const allergiesInfo = params.allergies.length > 0 ? `El usuario es alérgico a: ${params.allergies.join(', ')}. Evita estos ingredientes estrictamente.` : '';
+    const mealTypeInstruction = params.mealType && params.mealType !== 'any'
+        ? `Las recetas deben ser específicamente para '${params.mealType}'.`
+        : 'Genera una variedad de tipos de comida (ej. desayuno, almuerzo, cena) si es apropiado.';
 
     const prompt = `
         Eres un nutricionista deportivo experto. Tu tarea es generar 2-3 recetas deliciosas, saludables y fáciles de hacer basadas en los objetivos de macros y las restricciones dietéticas del usuario.
@@ -196,12 +200,13 @@ export const generateRecipesApi = async (params: RecipeGenerationParams): Promis
         - ${allergiesInfo}
 
         Instrucciones:
-        1.  Genera 2 o 3 recetas distintas (ej: desayuno, almuerzo, cena).
+        1.  Genera 2 o 3 recetas distintas. ${mealTypeInstruction}
         2.  Para cada receta, proporciona un nombre, descripción, tipo de comida, tiempos de preparación y cocción, una lista de ingredientes con cantidades, instrucciones paso a paso y macros totales.
-        3.  Los macros de cada receta deben ser estimados y contribuir razonablemente a los objetivos diarios del usuario.
-        4.  Para cada ingrediente, proporciona su nombre, cantidad, macros estimados (calorías, proteína, carbohidratos, grasas), una categoría (ej: proteína, carbohidrato, vegetal, grasa), y una lista de posibles sustitutos.
-        5.  Asegúrate de que las instrucciones sean claras y concisas.
-        6.  Devuelve la respuesta como un único array JSON de objetos de receta que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
+        3.  Si se especifica un tipo de comida, todas las recetas generadas deben coincidir con ese tipo.
+        4.  Los macros de cada receta deben ser estimados y contribuir razonablemente a los objetivos diarios del usuario.
+        5.  Para cada ingrediente, proporciona su nombre, cantidad, macros estimados (calorías, proteína, carbohidratos, grasas), una categoría (ej: proteína, carbohidrato, vegetal, grasa), y una lista de posibles sustitutos.
+        6.  Asegúrate de que las instrucciones sean claras y concisas.
+        7.  Devuelve la respuesta como un único array JSON de objetos de receta que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
 
     const macroSchema = {
