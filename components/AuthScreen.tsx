@@ -18,7 +18,7 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
     const handleAuthSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (authView === 'register' && authForm.password !== authForm.confirmPassword) {
-            alert("Passwords don't match!");
+            alert("¡Las contraseñas no coinciden!");
             return;
         }
         onLoginSuccess();
@@ -29,29 +29,29 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-center">
-                        {authView === 'login' ? 'Welcome Back' : 'Create Account'}
+                        {authView === 'login' ? 'Bienvenido de nuevo' : 'Crear cuenta'}
                     </CardTitle>
                     <CardDescription className="text-center">
                         {authView === 'login'
-                            ? 'Sign in to your fitness journey'
-                            : 'Start your personalized fitness journey'}
+                            ? 'Inicia sesión en tu viaje de fitness'
+                            : 'Comienza tu viaje de fitness personalizado'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleAuthSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">Correo electrónico</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="your@email.com"
+                                placeholder="tu@email.com"
                                 value={authForm.email}
                                 onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">Contraseña</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -62,7 +62,7 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
                         </div>
                         {authView === 'register' && (
                             <div className="space-y-2">
-                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
                                 <Input
                                     id="confirmPassword"
                                     type="password"
@@ -72,22 +72,20 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
                                 />
                             </div>
                         )}
-                        {/* FIX: Added missing variant and size props to Button component */}
                         <Button type="submit" className="w-full" variant="default" size="default">
-                            {authView === 'login' ? 'Sign In' : 'Register'}
+                            {authView === 'login' ? 'Iniciar sesión' : 'Registrarse'}
                         </Button>
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center">
-                    {/* FIX: Added missing size prop to Button component */}
                     <Button
                         variant="link"
                         size="default"
                         onClick={() => setAuthView(authView === 'login' ? 'register' : 'login')}
                     >
                         {authView === 'login'
-                            ? "Don't have an account? Register"
-                            : "Already have an account? Sign In"}
+                            ? "¿No tienes una cuenta? Regístrate"
+                            : "¿Ya tienes una cuenta? Inicia sesión"}
                     </Button>
                 </CardFooter>
             </Card>

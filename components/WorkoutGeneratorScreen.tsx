@@ -56,7 +56,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       .map(([goal]) => goal);
     
     if (activeGoals.length === 0) {
-        setError("Please select at least one training goal.");
+        setError("Por favor, selecciona al menos un objetivo de entrenamiento.");
         setIsGeneratingState(false);
         setIsGenerating(false);
         return;
@@ -76,7 +76,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       setGeneratedPlan(newPlan);
     } catch (e) {
       console.error("Failed to generate workout plan:", e);
-      setError("An error occurred while generating the plan. Please try again.");
+      setError("Ocurrió un error al generar el plan. Por favor, inténtalo de nuevo.");
     } finally {
       setIsGeneratingState(false);
       setIsGenerating(false);
@@ -106,7 +106,6 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Generador de Rutinas</h1>
-            {/* FIX: Added missing size prop to Button component */}
             <Button variant="outline" size="default" onClick={onBack}>Volver al Dashboard</Button>
         </div>
         
@@ -123,9 +122,8 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
             />
             {generatedPlan && !isGeneratingState && (
                 <div className="text-right">
-                    {/* FIX: Added missing variant prop to Button component */}
                     <Button size="lg" variant="default" onClick={handleSavePlan}>
-                        Guardar y Volver al Dashboard
+                        Guardar y Volver al Panel
                     </Button>
                 </div>
             )}

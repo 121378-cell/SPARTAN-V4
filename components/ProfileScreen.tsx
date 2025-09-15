@@ -22,22 +22,21 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-bold">Profile Settings</h1>
-                    {/* FIX: Added missing size prop to Button component */}
+                    <h1 className="text-2xl font-bold">Ajustes del Perfil</h1>
                     <Button variant="outline" size="default" onClick={onBack}>
-                        Back to Dashboard
+                        Volver al Panel
                     </Button>
                 </div>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
-                        <CardDescription>Update your fitness profile</CardDescription>
+                        <CardTitle>Información Personal</CardTitle>
+                        <CardDescription>Actualiza tu perfil de fitness</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">Nombre</Label>
                                 <Input
                                     id="name"
                                     value={userData.name}
@@ -45,7 +44,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="age">Age</Label>
+                                <Label htmlFor="age">Edad</Label>
                                 <Input
                                     id="age"
                                     type="number"
@@ -54,7 +53,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="weight">Weight (kg)</Label>
+                                <Label htmlFor="weight">Peso (kg)</Label>
                                 <Input
                                     id="weight"
                                     type="number"
@@ -63,7 +62,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="height">Height (cm)</Label>
+                                <Label htmlFor="height">Altura (cm)</Label>
                                 <Input
                                     id="height"
                                     type="number"
@@ -74,26 +73,25 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                         </div>
 
                         <div className="mt-4 space-y-2">
-                            <Label>Fitness Level</Label>
+                            <Label>Nivel de Condición Física</Label>
                             <div className="flex gap-4">
                                 {(['beginner', 'intermediate', 'advanced'] as const).map(level => (
-                                    // FIX: Added missing size prop to Button component
                                     <Button
                                         key={level}
                                         variant={userData.fitnessLevel === level ? 'default' : 'outline'}
                                         size="default"
                                         onClick={() => setUserData({ ...userData, fitnessLevel: level })}
                                     >
-                                        {level.charAt(0).toUpperCase() + level.slice(1)}
+                                        {level === 'beginner' ? 'Principiante' : level === 'intermediate' ? 'Intermedio' : 'Avanzado'}
                                     </Button>
                                 ))}
                             </div>
                         </div>
 
                         <div className="mt-4 space-y-2">
-                            <Label>Fitness Goals</Label>
+                            <Label>Objetivos de Fitness</Label>
                             <div className="flex flex-wrap gap-2">
-                                {['Weight Loss', 'Muscle Gain', 'Endurance', 'Flexibility', 'Strength'].map(goal => (
+                                {['Pérdida de Peso', 'Ganancia Muscular', 'Resistencia', 'Flexibilidad', 'Fuerza'].map(goal => (
                                     <Button
                                         key={goal}
                                         variant={userData.goals.includes(goal) ? 'default' : 'outline'}
@@ -108,9 +106,8 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-end">
-                        {/* FIX: Added missing variant and size props to Button component */}
                         <Button variant="default" size="default" onClick={onBack}>
-                            Save Changes
+                            Guardar Cambios
                         </Button>
                     </CardFooter>
                 </Card>

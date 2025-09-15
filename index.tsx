@@ -23,12 +23,12 @@ export default function App() {
   
   // Mock user data
   const [userData, setUserData] = useState<UserData>({
-    name: 'Spartan User',
+    name: 'Usuario Spartan',
     age: 30,
     weight: 75,
     height: 180,
     fitnessLevel: 'intermediate',
-    goals: ['Muscle Gain', 'Strength'],
+    goals: ['Ganancia Muscular', 'Fuerza'],
   });
 
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
@@ -128,7 +128,7 @@ export default function App() {
       
       case 'workoutDetail':
         if (!selectedWorkout) {
-            // Failsafe, should not happen in normal flow
+            // A prueba de fallos, no debería ocurrir en el flujo normal
             setCurrentScreen('dashboard');
             return null;
         }

@@ -18,32 +18,32 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
     const availableEquipment = Object.entries(params.equipment)
         .filter(([_, value]) => value)
         .map(([key]) => key)
-        .join(', ') || 'none';
+        .join(', ') || 'ninguno';
 
     const injuryInfo = params.injuryHistory.hasInjuries 
-        ? `The user has the following injuries to consider: ${params.injuryHistory.injuries}. Please provide safe alternatives and modifications.`
-        : 'The user has no reported injuries.';
+        ? `El usuario tiene las siguientes lesiones a considerar: ${params.injuryHistory.injuries}. Por favor, proporciona alternativas seguras y modificaciones.`
+        : 'El usuario no ha reportado lesiones.';
 
     const prompt = `
-        You are a world-class certified personal trainer and fitness coach. Your task is to create a highly personalized, multi-day workout plan based on the user's detailed profile.
+        Eres un entrenador personal y preparador físico certificado de clase mundial. Tu tarea es crear un plan de entrenamiento de varios días, altamente personalizado, basado en el perfil detallado del usuario.
 
-        User Profile:
-        - Fitness Level: ${params.level}
-        - Training Days per Week: ${params.availableDays}
-        - Primary Training Location: ${params.trainingLocation}
-        - Available Equipment: ${availableEquipment}
-        - Primary Fitness Goals: ${params.goals.join(', ')}
-        - Injury History: ${injuryInfo}
-        - Previous Progress/History: ${params.previousProgress || 'No previous progress provided.'}
+        Perfil del Usuario:
+        - Nivel de Condición Física: ${params.level}
+        - Días de Entrenamiento por Semana: ${params.availableDays}
+        - Lugar Principal de Entrenamiento: ${params.trainingLocation}
+        - Equipamiento Disponible: ${availableEquipment}
+        - Objetivos Principales de Fitness: ${params.goals.join(', ')}
+        - Historial de Lesiones: ${injuryInfo}
+        - Progreso/Historial Previo: ${params.previousProgress || 'No se ha proporcionado progreso previo.'}
 
-        Instructions:
-        1.  Create a comprehensive workout plan for the specified number of training days.
-        2.  Each day should have a clear focus (e.g., Push, Pull, Legs, Full Body, Upper Body, Lower Body, Active Recovery).
-        3.  For each exercise, specify the name, number of sets, repetition range (e.g., "8-12"), rest period in seconds, and required equipment.
-        4.  If the user has injuries, include specific notes or alternative exercises to ensure safety. For example, if they have a knee injury, suggest box squats instead of deep squats.
-        5.  The plan's name and description should be motivating and reflect the user's goals.
-        6.  The exercise selection should be appropriate for the user's level, goals, and available equipment.
-        7.  Return the response as a single JSON object that strictly adheres to the provided schema. Do not include any markdown formatting.
+        Instrucciones:
+        1.  Crea un plan de entrenamiento completo para el número de días especificado.
+        2.  Cada día debe tener un enfoque claro (ej: Empuje, Tirón, Piernas, Cuerpo Completo, Tren Superior, Tren Inferior, Recuperación Activa).
+        3.  Para cada ejercicio, especifica el nombre, número de series, rango de repeticiones (ej: "8-12"), período de descanso en segundos y equipamiento requerido.
+        4.  Si el usuario tiene lesiones, incluye notas específicas o ejercicios alternativos para garantizar la seguridad. Por ejemplo, si tiene una lesión de rodilla, sugiere sentadillas a un cajón en lugar de sentadillas profundas.
+        5.  El nombre y la descripción del plan deben ser motivadores y reflejar los objetivos del usuario.
+        6.  La selección de ejercicios debe ser apropiada para el nivel del usuario, sus objetivos y el equipamiento disponible.
+        7.  Devuelve la respuesta como un único objeto JSON que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
 
     const exerciseSchema = {
@@ -51,10 +51,10 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
         properties: {
             name: { type: Type.STRING },
             sets: { type: Type.INTEGER },
-            reps: { type: Type.STRING, description: 'Repetition range, e.g., "8-12" or "AMRAP"' },
-            rest: { type: Type.INTEGER, description: 'Rest time in seconds between sets' },
+            reps: { type: Type.STRING, description: 'Rango de repeticiones, ej: "8-12" o "AMRAP"' },
+            rest: { type: Type.INTEGER, description: 'Tiempo de descanso en segundos entre series' },
             equipment: { type: Type.STRING },
-            notes: { type: Type.STRING, description: 'Optional notes for form, safety, or alternatives.' },
+            notes: { type: Type.STRING, description: 'Notas opcionales sobre técnica, seguridad o alternativas.' },
         },
         required: ['name', 'sets', 'reps', 'rest', 'equipment']
     };
@@ -63,7 +63,7 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
         type: Type.OBJECT,
         properties: {
             day: { type: Type.INTEGER },
-            focus: { type: Type.STRING, description: 'e.g., "Push Day", "Full Body Strength"' },
+            focus: { type: Type.STRING, description: 'ej: "Día de Empuje", "Fuerza de Cuerpo Completo"' },
             exercises: {
                 type: Type.ARRAY,
                 items: exerciseSchema
@@ -75,9 +75,9 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
     const responseSchema = {
         type: Type.OBJECT,
         properties: {
-            name: { type: Type.STRING, description: "A creative and motivating name for the workout plan." },
-            description: { type: Type.STRING, description: "A brief, encouraging description of the plan." },
-            focus: { type: Type.ARRAY, items: { type: Type.STRING }, description: "The primary goals of this plan." },
+            name: { type: Type.STRING, description: "Un nombre creativo y motivador para el plan de entrenamiento." },
+            description: { type: Type.STRING, description: "Una descripción breve y alentadora del plan." },
+            focus: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Los objetivos principales de este plan." },
             days: {
                 type: Type.ARRAY,
                 items: dayPlanSchema
@@ -103,25 +103,25 @@ export const analyzeBloodTestApi = async (biomarkers: Record<string, string>): P
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     const prompt = `
-        You are an expert sports scientist and functional medicine practitioner specializing in optimizing human performance.
-        Analyze the following blood test results for an active individual. Provide a concise summary, a detailed breakdown of each marker, and actionable recommendations related to fitness, nutrition, and lifestyle.
+        Eres un científico deportivo experto y un profesional de la medicina funcional especializado en optimizar el rendimiento humano.
+        Analiza los siguientes resultados de análisis de sangre para una persona activa. Proporciona un resumen conciso, un desglose detallado de cada marcador y recomendaciones prácticas relacionadas con el fitness, la nutrición y el estilo de vida.
 
-        User's Biomarker Data:
+        Datos de Biomarcadores del Usuario:
         ${JSON.stringify(biomarkers, null, 2)}
 
-        Instructions:
-        1.  **Summary:** Provide a brief, easy-to-understand overview of the results, highlighting key findings.
-        2.  **Biomarker Breakdown:** For each marker provided by the user:
-            -   State the marker's name, the user's value, and the standard unit.
-            -   Provide a generally accepted optimal range for active individuals.
-            -   Assign a status: "Optimal", "Borderline", "High", or "Low".
-            -   Write a brief interpretation of what this marker indicates for health and athletic performance.
-        3.  **Recommendations:** Based on the results, provide specific, actionable advice categorized into:
-            -   **Nutrition:** Specific foods to incorporate or reduce.
-            -   **Supplements:** Potential supplements that could help (e.g., "Consider supplementing with Vitamin D...").
-            -   **Lifestyle & Training:** Suggestions regarding sleep, stress management, or potential training modifications.
-        4.  **Disclaimer:** Include a clear disclaimer that this analysis is for informational purposes and is not a substitute for professional medical advice.
-        5.  Return the response as a single JSON object that strictly adheres to the provided schema. Do not include any markdown formatting.
+        Instrucciones:
+        1.  **Resumen:** Proporciona una visión general breve y fácil de entender de los resultados, destacando los hallazgos clave.
+        2.  **Desglose de Biomarcadores:** Para cada marcador proporcionado por el usuario:
+            -   Indica el nombre del marcador, el valor del usuario y la unidad estándar.
+            -   Proporciona un rango óptimo generalmente aceptado para individuos activos.
+            -   Asigna un estado: "Óptimo", "Límite", "Alto" o "Bajo".
+            -   Escribe una breve interpretación de lo que este marcador indica para la salud y el rendimiento deportivo.
+        3.  **Recomendaciones:** Basado en los resultados, proporciona consejos específicos y prácticos categorizados en:
+            -   **Nutrición:** Alimentos específicos para incorporar o reducir.
+            -   **Suplementos:** Posibles suplementos que podrían ayudar (ej: "Considera suplementar con Vitamina D...").
+            -   **Estilo de Vida y Entrenamiento:** Sugerencias sobre sueño, gestión del estrés o posibles modificaciones en el entrenamiento.
+        4.  **Descargo de Responsabilidad:** Incluye un claro descargo de responsabilidad de que este análisis es para fines informativos y no sustituye el consejo médico profesional.
+        5.  Devuelve la respuesta como un único objeto JSON que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
 
     const analyzedMarkerSchema = {
@@ -131,7 +131,7 @@ export const analyzeBloodTestApi = async (biomarkers: Record<string, string>): P
             value: { type: Type.STRING },
             unit: { type: Type.STRING },
             optimalRange: { type: Type.STRING },
-            status: { type: Type.STRING, enum: ["Optimal", "Borderline", "High", "Low"] },
+            status: { type: Type.STRING, enum: ["Óptimo", "Límite", "Alto", "Bajo"] },
             interpretation: { type: Type.STRING }
         },
         required: ["name", "value", "unit", "optimalRange", "status", "interpretation"]
@@ -142,7 +142,7 @@ export const analyzeBloodTestApi = async (biomarkers: Record<string, string>): P
         properties: {
             nutrition: { type: Type.ARRAY, items: { type: Type.STRING } },
             supplements: { type: Type.ARRAY, items: { type: Type.STRING } },
-            lifestyle: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lifestyle and Training recommendations" }
+            lifestyle: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Recomendaciones de estilo de vida y entrenamiento" }
         },
         required: ["nutrition", "supplements", "lifestyle"]
     };
@@ -181,27 +181,27 @@ interface RecipeGenerationParams {
 export const generateRecipesApi = async (params: RecipeGenerationParams): Promise<Omit<Recipe, 'id'>[]> => {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    const preferences = params.dietaryPreferences.length > 0 ? `Dietary preferences: ${params.dietaryPreferences.join(', ')}.` : '';
-    const allergiesInfo = params.allergies.length > 0 ? `The user is allergic to: ${params.allergies.join(', ')}. Avoid these ingredients strictly.` : '';
+    const preferences = params.dietaryPreferences.length > 0 ? `Preferencias dietéticas: ${params.dietaryPreferences.join(', ')}.` : '';
+    const allergiesInfo = params.allergies.length > 0 ? `El usuario es alérgico a: ${params.allergies.join(', ')}. Evita estos ingredientes estrictamente.` : '';
 
     const prompt = `
-        You are an expert sports nutritionist. Your task is to generate 2-3 delicious, healthy, and easy-to-make recipes based on the user's macro goals and dietary restrictions.
+        Eres un nutricionista deportivo experto. Tu tarea es generar 2-3 recetas deliciosas, saludables y fáciles de hacer basadas en los objetivos de macros y las restricciones dietéticas del usuario.
 
-        User Profile:
-        - Calorie Goal: ${params.macroGoals.calories} kcal
-        - Protein Goal: ${params.macroGoals.protein} g
-        - Carbohydrate Goal: ${params.macroGoals.carbs} g
-        - Fat Goal: ${params.macroGoals.fats} g
+        Perfil del Usuario:
+        - Objetivo de Calorías: ${params.macroGoals.calories} kcal
+        - Objetivo de Proteínas: ${params.macroGoals.protein} g
+        - Objetivo de Carbohidratos: ${params.macroGoals.carbs} g
+        - Objetivo de Grasas: ${params.macroGoals.fats} g
         - ${preferences}
         - ${allergiesInfo}
 
-        Instructions:
-        1.  Generate 2 or 3 distinct recipes (e.g., breakfast, lunch, dinner).
-        2.  For each recipe, provide a name, description, meal type, prep and cook times, a list of ingredients with amounts, step-by-step instructions, and total macros.
-        3.  The macros for each recipe should be estimated and contribute reasonably to the user's daily goals.
-        4.  For each ingredient, provide its name, amount, estimated macros (calories, protein, carbs, fats), a category (e.g., proteína, carbohidrato, vegetal, grasa), and a list of potential substitutes.
-        5.  Ensure the instructions are clear and concise.
-        6.  Return the response as a single JSON array of recipe objects that strictly adheres to the provided schema. Do not include any markdown formatting.
+        Instrucciones:
+        1.  Genera 2 o 3 recetas distintas (ej: desayuno, almuerzo, cena).
+        2.  Para cada receta, proporciona un nombre, descripción, tipo de comida, tiempos de preparación y cocción, una lista de ingredientes con cantidades, instrucciones paso a paso y macros totales.
+        3.  Los macros de cada receta deben ser estimados y contribuir razonablemente a los objetivos diarios del usuario.
+        4.  Para cada ingrediente, proporciona su nombre, cantidad, macros estimados (calorías, proteína, carbohidratos, grasas), una categoría (ej: proteína, carbohidrato, vegetal, grasa), y una lista de posibles sustitutos.
+        5.  Asegúrate de que las instrucciones sean claras y concisas.
+        6.  Devuelve la respuesta como un único array JSON de objetos de receta que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
 
     const macroSchema = {

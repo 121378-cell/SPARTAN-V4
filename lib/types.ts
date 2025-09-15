@@ -108,7 +108,8 @@ export type AnalyzedMarker = {
   value: string;
   unit: string;
   optimalRange: string;
-  status: 'Optimal' | 'Borderline' | 'High' | 'Low';
+  // FIX: Changed status to Spanish to align with API schema and UI.
+  status: 'Óptimo' | 'Límite' | 'Alto' | 'Bajo';
   interpretation: string;
 };
 

@@ -11,16 +11,16 @@ interface BloodTestAnalyzerProps {
 }
 
 const initialBiomarkers = {
-    'Testosterone': { value: '', unit: 'ng/dL' },
-    'Free Testosterone': { value: '', unit: 'pg/mL' },
+    'Testosterona': { value: '', unit: 'ng/dL' },
+    'Testosterona Libre': { value: '', unit: 'pg/mL' },
     'Cortisol': { value: '', unit: 'µg/dL' },
-    'Vitamin D': { value: '', unit: 'ng/mL' },
-    'HDL Cholesterol': { value: '', unit: 'mg/dL' },
-    'LDL Cholesterol': { value: '', unit: 'mg/dL' },
-    'Triglycerides': { value: '', unit: 'mg/dL' },
-    'Fasting Glucose': { value: '', unit: 'mg/dL' },
+    'Vitamina D': { value: '', unit: 'ng/mL' },
+    'Colesterol HDL': { value: '', unit: 'mg/dL' },
+    'Colesterol LDL': { value: '', unit: 'mg/dL' },
+    'Triglicéridos': { value: '', unit: 'mg/dL' },
+    'Glucosa en Ayunas': { value: '', unit: 'mg/dL' },
     'HbA1c': { value: '', unit: '%' },
-    'Ferritin': { value: '', unit: 'ng/mL' },
+    'Ferritina': { value: '', unit: 'ng/mL' },
 };
 
 export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
@@ -45,7 +45,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
             }, {} as Record<string, string>);
 
         if (Object.keys(filledMarkers).length === 0) {
-            setError("Please enter at least one biomarker value to analyze.");
+            setError("Por favor, introduce al menos el valor de un biomarcador para analizar.");
             return;
         }
 
@@ -55,10 +55,12 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
 
         try {
             const result = await analyzeBloodTestApi(filledMarkers);
+            // FIX: Removed unnecessary translation logic. The API is configured to return Spanish,
+            // and types are now aligned. This resolves the type error.
             setAnalysis(result);
         } catch (e) {
             console.error("Analysis failed:", e);
-            setError("Failed to analyze the results. Please check your connection and try again.");
+            setError("No se pudieron analizar los resultados. Comprueba tu conexión e inténtalo de nuevo.");
         } finally {
             setIsLoading(false);
         }
@@ -66,10 +68,11 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
     
     const getStatusColor = (status: AnalyzedMarker['status']) => {
         switch (status) {
-            case 'Optimal': return 'bg-green-100 text-green-800 border-green-200';
-            case 'Borderline': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'High':
-            case 'Low':
+            // FIX: Cases now match the updated Spanish status types.
+            case 'Óptimo': return 'bg-green-100 text-green-800 border-green-200';
+            case 'Límite': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            case 'Alto':
+            case 'Bajo':
                 return 'bg-red-100 text-red-800 border-red-200';
             default: return 'bg-gray-100 text-gray-800';
         }
@@ -86,12 +89,12 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold">Blood Test Analyzer</h1>
-                        <p className="text-muted-foreground mt-1">Get AI-powered insights from your lab results.</p>
+                        <h1 className="text-3xl font-bold">Analizador de Análisis de Sangre</h1>
+                        <p className="text-muted-foreground mt-1">Obtén información con IA de los resultados de tu laboratorio.</p>
                     </div>
                     <Button variant="outline" size="default" onClick={onBack}>
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Dashboard
+                        Volver al Panel
                     </Button>
                 </div>
 
@@ -102,9 +105,9 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <FlaskConical className="h-5 w-5" />
-                                    Enter Your Results
+                                    Introduce tus Resultados
                                 </CardTitle>
-                                <CardDescription>Input the values from your recent blood test.</CardDescription>
+                                <CardDescription>Introduce los valores de tu último análisis de sangre.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {Object.entries(biomarkers).map(([marker, data]) => (
@@ -114,7 +117,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                                             <Input
                                                 id={marker}
                                                 type="number"
-                                                placeholder="e.g., 550"
+                                                placeholder="ej: 550"
                                                 value={data.value}
                                                 onChange={(e) => handleInputChange(marker, e.target.value)}
                                                 className="rounded-r-none"
@@ -127,9 +130,8 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                                 ))}
                             </CardContent>
                         </Card>
-                        {/* FIX: Added missing variant prop to Button component */}
                         <Button onClick={handleAnalyze} disabled={isLoading} size="lg" className="w-full" variant="default">
-                            {isLoading ? 'Analyzing...' : <><Sparkles className="h-4 w-4 mr-2" />Analyze with AI</>}
+                            {isLoading ? 'Analizando...' : <><Sparkles className="h-4 w-4 mr-2" />Analizar con IA</>}
                         </Button>
                     </div>
 
@@ -139,7 +141,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                             <Card>
                                 <CardContent className="py-24 text-center">
                                     <Droplets className="h-10 w-10 mx-auto animate-bounce text-primary" />
-                                    <p className="mt-4 text-muted-foreground">Analyzing your biomarkers...</p>
+                                    <p className="mt-4 text-muted-foreground">Analizando tus biomarcadores...</p>
                                 </CardContent>
                             </Card>
                         )}
@@ -148,7 +150,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                              <Alert variant="destructive">
                                 <AlertTriangle className="h-4 w-4" />
                                 <div>
-                                    <AlertTitle>Analysis Error</AlertTitle>
+                                    <AlertTitle>Error en el Análisis</AlertTitle>
                                     <AlertDescription>{error}</AlertDescription>
                                 </div>
                             </Alert>
@@ -157,7 +159,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                         {!isLoading && !analysis && !error && (
                             <Card>
                                 <CardContent className="py-24 text-center">
-                                    <p className="text-muted-foreground">Your AI-powered analysis will appear here.</p>
+                                    <p className="text-muted-foreground">Tu análisis con IA aparecerá aquí.</p>
                                 </CardContent>
                             </Card>
                         )}
@@ -166,7 +168,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                             <div className="space-y-6">
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Analysis Summary</CardTitle>
+                                        <CardTitle>Resumen del Análisis</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <p className="text-muted-foreground">{analysis.summary}</p>
@@ -175,19 +177,19 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                                 
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Biomarker Breakdown</CardTitle>
+                                        <CardTitle>Desglose de Biomarcadores</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
                                         {analysis.analyzedMarkers.map(marker => (
                                             <div key={marker.name} className="border rounded-lg p-4">
                                                 <div className="flex justify-between items-start">
                                                     <h3 className="font-semibold">{marker.name}</h3>
-                                                    <Badge variant="secondary" className={getStatusColor(marker.status)}>{marker.status}</Badge>
+                                                    <Badge variant="secondary" className={getStatusColor(marker.status as any)}>{marker.status}</Badge>
                                                 </div>
                                                 <div className="text-sm text-muted-foreground mt-1">
-                                                    Your Value: <span className="font-medium text-primary">{marker.value} {marker.unit}</span>
+                                                    Tu Valor: <span className="font-medium text-primary">{marker.value} {marker.unit}</span>
                                                     <span className="mx-2">|</span>
-                                                    Optimal Range: <span className="font-medium text-primary">{marker.optimalRange}</span>
+                                                    Rango Óptimo: <span className="font-medium text-primary">{marker.optimalRange}</span>
                                                 </div>
                                                 <p className="mt-2 text-sm">{marker.interpretation}</p>
                                             </div>
@@ -197,14 +199,14 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
 
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Actionable Recommendations</CardTitle>
+                                        <CardTitle>Recomendaciones Prácticas</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-6">
                                         {Object.entries(analysis.recommendations).map(([category, items]) => (
                                             <div key={category}>
                                                 <h3 className="font-semibold text-lg flex items-center gap-2 mb-2 capitalize">
                                                     {recommendationIcons[category as keyof typeof recommendationIcons]}
-                                                    {category === 'lifestyle' ? 'Lifestyle & Training' : category}
+                                                    {category === 'lifestyle' ? 'Estilo de Vida y Entrenamiento' : category}
                                                 </h3>
                                                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                                                     {(items as string[]).map((item, index) => (
@@ -219,7 +221,7 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
                                 <Alert variant="default">
                                     <AlertTriangle className="h-4 w-4" />
                                     <div>
-                                        <AlertTitle>Disclaimer</AlertTitle>
+                                        <AlertTitle>Descargo de Responsabilidad</AlertTitle>
                                         <AlertDescription>{analysis.disclaimer}</AlertDescription>
                                     </div>
                                 </Alert>

@@ -107,19 +107,19 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
     const recs: Recommendation[] = [];
     
     if (data.sleep.duration < 420) {
-      recs.push({ type: 'sleep', priority: 'high', message: `You only slept ${Math.floor(data.sleep.duration/60)}h ${data.sleep.duration%60}m. Try to go to bed 30-60 minutes earlier tonight.`, action: 'Set a bedtime reminder alarm.', icon: <Moon className="h-4 w-4" /> });
+      recs.push({ type: 'sleep', priority: 'high', message: `Solo dormiste ${Math.floor(data.sleep.duration/60)}h ${data.sleep.duration%60}m. Intenta acostarte 30-60 minutos antes esta noche.`, action: 'Configura una alarma como recordatorio para dormir.', icon: <Moon className="h-4 w-4" /> });
     }
     if (data.recovery.hrv < 50) {
-      recs.push({ type: 'recovery', priority: 'high', message: `Your HRV (${data.recovery.hrv}ms) is low, indicating possible accumulated stress. Prioritize recovery today.`, action: 'Try breathing techniques or meditation.', icon: <AlertCircle className="h-4 w-4" /> });
+      recs.push({ type: 'recovery', priority: 'high', message: `Tu VFC (${data.recovery.hrv}ms) es baja, lo que indica un posible estrés acumulado. Prioriza la recuperación hoy.`, action: 'Prueba técnicas de respiración o meditación.', icon: <AlertCircle className="h-4 w-4" /> });
     }
     if (data.activity.steps < 8000) {
-        recs.push({ type: 'activity', priority: 'medium', message: `You've only taken ${data.activity.steps} steps today. Try a short walk this afternoon.`, icon: <TrendingUp className="h-4 w-4" /> });
+        recs.push({ type: 'activity', priority: 'medium', message: `Solo has dado ${data.activity.steps} pasos hoy. Intenta dar un paseo corto esta tarde.`, icon: <TrendingUp className="h-4 w-4" /> });
     }
     if (data.recovery.restingHeartRate > 60) {
-        recs.push({ type: 'recovery', priority: 'medium', message: `Your resting heart rate (${data.recovery.restingHeartRate}bpm) is elevated. Consider an active rest day.`, icon: <HeartPulse className="h-4 w-4" /> });
+        recs.push({ type: 'recovery', priority: 'medium', message: `Tu frecuencia cardíaca en reposo (${data.recovery.restingHeartRate}ppm) es elevada. Considera un día de descanso activo.`, icon: <HeartPulse className="h-4 w-4" /> });
     }
     if (recs.length === 0) {
-      recs.push({ type: 'recovery', priority: 'low', message: "Your metrics are in a good range! Keep up your current routine.", icon: <Zap className="h-4 w-4" /> });
+      recs.push({ type: 'recovery', priority: 'low', message: "¡Tus métricas están en un buen rango! Mantén tu rutina actual.", icon: <Zap className="h-4 w-4" /> });
     }
     setRecommendations(recs);
   };
@@ -131,7 +131,7 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
       const date = new Date();
       date.setDate(now.getDate() - (6 - i));
       data.push({
-        date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        date: date.toLocaleDateString('es-ES', { weekday: 'short' }),
         sleepDuration: Math.floor(Math.random() * 60) + 360,
         hrv: Math.floor(Math.random() * 30) + 50,
         steps: Math.floor(Math.random() * 5000) + 7000,
@@ -141,7 +141,7 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
   };
 
   const connectNewDevice = () => {
-    alert(`Connecting to a new device... In a real app, this would open the authentication flow.`);
+    alert(`Conectando a un nuevo dispositivo... En una aplicación real, esto abriría el flujo de autenticación.`);
   };
 
   return (
@@ -149,45 +149,45 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-start mb-6">
             <div>
-                <h1 className="text-3xl font-bold">Wearable Integration</h1>
+                <h1 className="text-3xl font-bold">Integración con Wearables</h1>
                 <p className="text-muted-foreground mt-1">
-                  Advanced analysis of your sleep, activity, and recovery data.
+                  Análisis avanzado de tus datos de sueño, actividad y recuperación.
                 </p>
             </div>
             <Button variant="outline" size="default" onClick={onBack}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                Volver
             </Button>
         </div>
         
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Connected Device</CardTitle>
-            <CardDescription>Select the wearable you want to see data from.</CardDescription>
+            <CardTitle>Dispositivo Conectado</CardTitle>
+            <CardDescription>Selecciona el wearable del que quieres ver los datos.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
               {connectedDevices.map(device => (
                 <Button key={device} variant={selectedDevice === device ? 'default' : 'outline'} size="default" onClick={() => setSelectedDevice(device)}>{device}</Button>
               ))}
-              <Button variant="outline" size="default" onClick={connectNewDevice}>+ Connect new device</Button>
+              <Button variant="outline" size="default" onClick={connectNewDevice}>+ Conectar nuevo dispositivo</Button>
             </div>
           </CardContent>
         </Card>
         
         {loading ? (
-          <Card><CardContent className="py-12 text-center"><p>Loading data from {selectedDevice}...</p><Progress value={50} className="mt-4 w-full" /></CardContent></Card>
+          <Card><CardContent className="py-12 text-center"><p>Cargando datos de {selectedDevice}...</p><Progress value={50} className="mt-4 w-full" /></CardContent></Card>
         ) : wearableData ? (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><Moon className="h-4 w-4" />Sleep</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{Math.floor(wearableData.sleep.duration/60)}h{wearableData.sleep.duration%60}m</div><div className="text-sm text-muted-foreground">Quality: {wearableData.sleep.quality}/100</div></CardContent></Card>
-              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><Activity className="h-4 w-4" />Activity</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.activity.steps.toLocaleString()}</div><div className="text-sm text-muted-foreground">{wearableData.activity.calories} kcal</div></CardContent></Card>
-              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><HeartPulse className="h-4 w-4" />Heart Rate</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.recovery.restingHeartRate} bpm</div><div className="text-sm text-muted-foreground">HRV: {wearableData.recovery.hrv}ms</div></CardContent></Card>
-              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><BatteryFull className="h-4 w-4" />Recovery</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.recovery.readiness || Math.floor((wearableData.recovery.hrv / 70) * 10) }/10</div><div className="text-sm text-muted-foreground">Stress: {wearableData.recovery.stress}/100</div></CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><Moon className="h-4 w-4" />Sueño</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{Math.floor(wearableData.sleep.duration/60)}h{wearableData.sleep.duration%60}m</div><div className="text-sm text-muted-foreground">Calidad: {wearableData.sleep.quality}/100</div></CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><Activity className="h-4 w-4" />Actividad</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.activity.steps.toLocaleString()}</div><div className="text-sm text-muted-foreground">{wearableData.activity.calories} kcal</div></CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><HeartPulse className="h-4 w-4" />Frec. Cardíaca</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.recovery.restingHeartRate} ppm</div><div className="text-sm text-muted-foreground">VFC: {wearableData.recovery.hrv}ms</div></CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium"><BatteryFull className="h-4 w-4" />Recuperación</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{wearableData.recovery.readiness || Math.floor((wearableData.recovery.hrv / 70) * 10) }/10</div><div className="text-sm text-muted-foreground">Estrés: {wearableData.recovery.stress}/100</div></CardContent></Card>
             </div>
             
             <Card>
-              <CardHeader><CardTitle>Personalized Recommendations</CardTitle><CardDescription>Based on your data from the last few days.</CardDescription></CardHeader>
+              <CardHeader><CardTitle>Recomendaciones Personalizadas</CardTitle><CardDescription>Basadas en tus datos de los últimos días.</CardDescription></CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {recommendations.map((rec, idx) => (
@@ -202,7 +202,7 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
             
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center"><CardTitle>Trends</CardTitle>
+                <div className="flex justify-between items-center"><CardTitle>Tendencias</CardTitle>
                   <div className="flex gap-2">
                     <Button variant={timeframe === '24h' ? 'default' : 'outline'} size="sm" onClick={() => setTimeframe('24h')}>24h</Button>
                     <Button variant={timeframe === '7d' ? 'default' : 'outline'} size="sm" onClick={() => setTimeframe('7d')}>7d</Button>
@@ -215,9 +215,9 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={healthData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" /><XAxis dataKey="date" /><YAxis yAxisId="left" orientation="left" stroke="#8884d8" /><YAxis yAxisId="right" orientation="right" stroke="#82ca9d" /><Tooltip /><Legend />
-                      <Line yAxisId="left" type="monotone" dataKey="sleepDuration" name="Sleep (min)" stroke="#8884d8" strokeWidth={2} activeDot={{ r: 6 }} />
-                      <Line yAxisId="right" type="monotone" dataKey="hrv" name="HRV (ms)" stroke="#82ca9d" strokeWidth={2} />
-                      <Line yAxisId="left" type="monotone" dataKey="steps" name="Steps" stroke="#ffc658" strokeWidth={2} />
+                      <Line yAxisId="left" type="monotone" dataKey="sleepDuration" name="Sueño (min)" stroke="#8884d8" strokeWidth={2} activeDot={{ r: 6 }} />
+                      <Line yAxisId="right" type="monotone" dataKey="hrv" name="VFC (ms)" stroke="#82ca9d" strokeWidth={2} />
+                      <Line yAxisId="left" type="monotone" dataKey="steps" name="Pasos" stroke="#ffc658" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -225,12 +225,12 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
             </Card>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card><CardHeader><CardTitle className="flex items-center gap-2"><Moon className="h-5 w-5" />Sleep Analysis</CardTitle></CardHeader><CardContent><div className="space-y-4"><div className="flex justify-between"><span className="text-muted-foreground">Bedtime:</span><span className="font-medium">{wearableData.sleep.bedtime}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Wake time:</span><span className="font-medium">{wearableData.sleep.wakeTime}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Deep sleep:</span><span className="font-medium">{wearableData.sleep.deepSleep} mins ({Math.round((wearableData.sleep.deepSleep/wearableData.sleep.duration)*100)}%)</span></div><div className="flex justify-between"><span className="text-muted-foreground">REM sleep:</span><span className="font-medium">{wearableData.sleep.remSleep} mins ({Math.round((wearableData.sleep.remSleep/wearableData.sleep.duration)*100)}%)</span></div><div className="flex justify-between"><span className="text-muted-foreground">Times awake:</span><span className="font-medium">{wearableData.sleep.wakeTimes}</span></div></div></CardContent><CardFooter><Button variant="outline" size="default" className="w-full">View full details</Button></CardFooter></Card>
-              <Card><CardHeader><CardTitle className="flex items-center gap-2"><Activity className="h-5 w-5" />Activity Analysis</CardTitle></CardHeader><CardContent><div className="space-y-4"><div className="flex justify-between"><span className="text-muted-foreground">Total steps:</span><span className="font-medium">{wearableData.activity.steps.toLocaleString()}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Calories burned:</span><span className="font-medium">{wearableData.activity.calories}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Active minutes:</span><span className="font-medium">{wearableData.activity.activeMinutes}</span></div>{wearableData.activity.workoutType && (<div className="flex justify-between"><span className="text-muted-foreground">Workout:</span><span className="font-medium">{wearableData.activity.workoutType} ({wearableData.activity.workoutDuration} mins)</span></div>)}<div className="flex justify-between"><span className="text-muted-foreground">Intensity:</span><span className="font-medium">{wearableData.activity.steps > 12000 ? 'High' : wearableData.activity.steps > 8000 ? 'Moderate' : 'Low'}</span></div></div></CardContent><CardFooter><Button variant="outline" size="default" className="w-full">View full details</Button></CardFooter></Card>
+              <Card><CardHeader><CardTitle className="flex items-center gap-2"><Moon className="h-5 w-5" />Análisis de Sueño</CardTitle></CardHeader><CardContent><div className="space-y-4"><div className="flex justify-between"><span className="text-muted-foreground">Hora de acostarse:</span><span className="font-medium">{wearableData.sleep.bedtime}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Hora de levantarse:</span><span className="font-medium">{wearableData.sleep.wakeTime}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Sueño profundo:</span><span className="font-medium">{wearableData.sleep.deepSleep} mins ({Math.round((wearableData.sleep.deepSleep/wearableData.sleep.duration)*100)}%)</span></div><div className="flex justify-between"><span className="text-muted-foreground">Sueño REM:</span><span className="font-medium">{wearableData.sleep.remSleep} mins ({Math.round((wearableData.sleep.remSleep/wearableData.sleep.duration)*100)}%)</span></div><div className="flex justify-between"><span className="text-muted-foreground">Veces despierto:</span><span className="font-medium">{wearableData.sleep.wakeTimes}</span></div></div></CardContent><CardFooter><Button variant="outline" size="default" className="w-full">Ver detalles completos</Button></CardFooter></Card>
+              <Card><CardHeader><CardTitle className="flex items-center gap-2"><Activity className="h-5 w-5" />Análisis de Actividad</CardTitle></CardHeader><CardContent><div className="space-y-4"><div className="flex justify-between"><span className="text-muted-foreground">Pasos totales:</span><span className="font-medium">{wearableData.activity.steps.toLocaleString()}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Calorías quemadas:</span><span className="font-medium">{wearableData.activity.calories}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Minutos activos:</span><span className="font-medium">{wearableData.activity.activeMinutes}</span></div>{wearableData.activity.workoutType && (<div className="flex justify-between"><span className="text-muted-foreground">Entrenamiento:</span><span className="font-medium">{wearableData.activity.workoutType} ({wearableData.activity.workoutDuration} mins)</span></div>)}<div className="flex justify-between"><span className="text-muted-foreground">Intensidad:</span><span className="font-medium">{wearableData.activity.steps > 12000 ? 'Alta' : wearableData.activity.steps > 8000 ? 'Moderada' : 'Baja'}</span></div></div></CardContent><CardFooter><Button variant="outline" size="default" className="w-full">Ver detalles completos</Button></CardFooter></Card>
             </div>
           </div>
         ) : (
-          <Card><CardContent className="py-12 text-center"><p>Select a wearable device to view your data</p></CardContent></Card>
+          <Card><CardContent className="py-12 text-center"><p>Selecciona un dispositivo wearable para ver tus datos</p></CardContent></Card>
         )}
       </div>
     </div>

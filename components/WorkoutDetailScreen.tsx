@@ -17,9 +17,8 @@ export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, o
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-2xl font-bold">{workoutPlan.name}</h1>
-                    {/* FIX: Added missing size prop to Button component */}
                     <Button variant="outline" size="default" onClick={onBack}>
-                        Back to Workouts
+                        Volver a Entrenamientos
                     </Button>
                 </div>
 
@@ -27,22 +26,20 @@ export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, o
                     <CardHeader>
                         <div className="flex justify-between items-center">
                             <div>
-                                <CardTitle>Workout Details</CardTitle>
+                                <CardTitle>Detalles del Entrenamiento</CardTitle>
                                 <CardDescription>{workoutPlan.description}</CardDescription>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Clock className="h-4 w-4" />
-                                {/* FIX: Property 'duration' does not exist on type 'WorkoutPlan'. Check for optional duration. */}
-                                {workoutPlan.duration && <span>{workoutPlan.duration} minutes</span>}
+                                {workoutPlan.duration && <span>{workoutPlan.duration} minutos</span>}
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent>
-                        {/* FIX: Property 'exercises' does not exist on type 'WorkoutPlan'. Iterate over days instead. */}
                         <div className="space-y-4">
                             {workoutPlan.days.map((day, dayIndex) => (
                                 <div key={dayIndex} className="border rounded-lg p-4">
-                                    <h3 className="font-semibold text-lg mb-2">Day {day.day}: {day.focus}</h3>
+                                    <h3 className="font-semibold text-lg mb-2">Día {day.day}: {day.focus}</h3>
                                     <div className="space-y-2">
                                         {day.exercises.map((exercise, index) => (
                                             <div key={index} className="border rounded-lg p-4 bg-gray-50">
@@ -50,13 +47,13 @@ export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, o
                                                     <h3 className="font-semibold">{exercise.name}</h3>
                                                     <Button variant="outline" size="sm" onClick={() => onCheckForm(exercise.name)}>
                                                         <Activity className="h-4 w-4 mr-2" />
-                                                        Check Form
+                                                        Verificar Técnica
                                                     </Button>
                                                 </div>
                                                 <div className="mt-2 text-sm text-muted-foreground">
-                                                    <span>{exercise.sets} sets × {exercise.reps ? `${exercise.reps} reps` : ''}</span>
+                                                    <span>{exercise.sets} series × {exercise.reps ? `${exercise.reps} reps` : ''}</span>
                                                     <span className="mx-2">|</span>
-                                                    <span>Rest: {exercise.rest} seconds between sets</span>
+                                                    <span>Descanso: {exercise.rest} segundos entre series</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -66,10 +63,8 @@ export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, o
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-end gap-2">
-                        {/* FIX: Added missing size prop to Button component */}
-                        <Button variant="outline" size="default">Edit Plan</Button>
-                        {/* FIX: Added missing variant and size props to Button component */}
-                        <Button variant="default" size="default" onClick={onComplete}>Mark as Completed</Button>
+                        <Button variant="outline" size="default">Editar Plan</Button>
+                        <Button variant="default" size="default" onClick={onComplete}>Marcar como Completado</Button>
                     </CardFooter>
                 </Card>
             </div>

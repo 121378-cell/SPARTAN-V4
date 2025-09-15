@@ -49,7 +49,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
         generateShoppingList(newRecipes);
     } catch (e) {
         console.error("Failed to generate recipes:", e);
-        setError("Sorry, we couldn't generate recipes at this moment. Please try again.");
+        setError("Lo sentimos, no pudimos generar recetas en este momento. Por favor, inténtalo de nuevo.");
     } finally {
         setIsGenerating(false);
     }
@@ -225,7 +225,6 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                 </Alert>
             )}
             <div className="flex border-b">
-              {/* FIX: Added missing size prop to Button component */}
               <Button
                 variant={activeTab === 'recipes' ? 'secondary' : 'ghost'}
                 size="default"
@@ -234,7 +233,6 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                 <Utensils className="h-4 w-4 mr-2" />
                 Recetas
               </Button>
-              {/* FIX: Added missing size prop to Button component */}
               <Button
                 variant={activeTab === 'shopping' ? 'secondary' : 'ghost'}
                 size="default"
