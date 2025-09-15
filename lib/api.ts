@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays, WorkoutPlan, BloodTestAnalysis, MacroGoals, Recipe, OverloadData, CorrectiveExercise, BodyPart } from "./types";
 
@@ -47,7 +48,8 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
         4.  Si el usuario tiene lesiones, incluye notas específicas o ejercicios alternativos para garantizar la seguridad. Por ejemplo, si tiene una lesión de rodilla, sugiere sentadillas a un cajón en lugar de sentadillas profundas.
         5.  El nombre y la descripción del plan deben ser motivadores y reflejar los objetivos del usuario, especialmente el principal.
         6.  La selección de ejercicios debe ser apropiada para el nivel del usuario, sus objetivos y el equipamiento disponible.
-        7.  Devuelve la respuesta como un único objeto JSON que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
+        7.  Calcula y proporciona una estimación de la duración promedio de cada sesión de entrenamiento en minutos. Nombra este campo 'duration'.
+        8.  Devuelve la respuesta como un único objeto JSON que se adhiera estrictamente al esquema proporcionado. No incluyas ningún formato markdown.
     `;
 
     const exerciseSchema = {
@@ -82,12 +84,13 @@ export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams):
             name: { type: Type.STRING, description: "Un nombre creativo y motivador para el plan de entrenamiento." },
             description: { type: Type.STRING, description: "Una descripción breve y alentadora del plan." },
             focus: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Los objetivos principales de este plan." },
+            duration: { type: Type.INTEGER, description: "La duración promedio estimada de una sesión de entrenamiento en minutos." },
             days: {
                 type: Type.ARRAY,
                 items: dayPlanSchema
             }
         },
-        required: ['name', 'description', 'focus', 'days']
+        required: ['name', 'description', 'focus', 'duration', 'days']
     };
 
     const response = await ai.models.generateContent({

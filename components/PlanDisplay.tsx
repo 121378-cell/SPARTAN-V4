@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, Badge } from "./ui";
-import { Dumbbell, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
+import { Dumbbell, AlertTriangle, ChevronDown, ChevronUp, Clock } from "lucide-react";
 import type { WorkoutPlan } from "../lib/types";
 
 interface PlanDisplayProps {
@@ -80,6 +81,12 @@ export default function PlanDisplay({ plan, isGenerating, error }: PlanDisplayPr
                         </Badge>
                     ))}
                     <Badge variant="outline">{plan.days.length} días/semana</Badge>
+                    {plan.duration && (
+                         <Badge variant="outline" className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {plan.duration} min/sesión
+                         </Badge>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
