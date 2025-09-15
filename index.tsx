@@ -16,6 +16,7 @@ import BloodTestAnalyzer from "./components/BloodTestAnalyzer";
 import OverloadDetection from "./components/OverloadDetection";
 import WorkoutEditorScreen from "./components/WorkoutEditorScreen";
 import BodyMeasurementScreen from "./components/BodyMeasurementScreen";
+import NotificationsManager from "./components/NotificationsManager";
 
 // App's main component, acts as a router and state manager
 export default function App() {
@@ -32,6 +33,11 @@ export default function App() {
     fitnessLevel: 'intermediate',
     goals: ['Ganancia Muscular', 'Fuerza'],
     trainingDays: 3,
+    notificationSettings: {
+      workouts: true,
+      hydration: true,
+      meals: true,
+    },
   });
 
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
@@ -202,7 +208,17 @@ export default function App() {
     }
   };
 
-  return <div className="app-container">{renderScreen()}</div>;
+  return (
+    <div className="app-container">
+      {currentScreen !== 'auth' && (
+        <NotificationsManager 
+          settings={userData.notificationSettings}
+          hasActiveWorkout={workoutPlans.length > 0} 
+        />
+      )}
+      {renderScreen()}
+    </div>
+  );
 }
 
 const container = document.getElementById('root');

@@ -15,6 +15,14 @@ export type InjuryHistory = {
 };
 export type TrainingDays = 1 | 2 | 3 | 4 | 5 | 6;
 
+// Types for Notifications
+export type NotificationSettings = {
+  workouts: boolean;
+  hydration: boolean;
+  meals: boolean;
+};
+
+
 // FIX: Added UserData type based on usage in ProfileScreen.tsx.
 export type UserData = {
   name: string;
@@ -24,6 +32,7 @@ export type UserData = {
   fitnessLevel: TrainingLevel;
   goals: string[];
   trainingDays: TrainingDays;
+  notificationSettings: NotificationSettings;
 };
 
 // FIX: Added ProgressData type based on usage in Dashboard.tsx.
