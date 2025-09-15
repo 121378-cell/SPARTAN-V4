@@ -205,13 +205,13 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* Recent Activity */}
+                {/* Workout History */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold">Actividad Reciente</h2>
+                    <h2 className="text-xl font-bold">Historial de Entrenamientos</h2>
                      <Card>
                         {progressData.length > 0 ? (
                              <CardContent className="p-4 space-y-3">
-                                {progressData.slice(0, 3).map((progress) => {
+                                {[...progressData].reverse().map((progress) => {
                                     const workout = workoutPlans.find(w => w.id === progress.workoutId);
                                     return (
                                         <div key={progress.date.toISOString()} className="flex justify-between items-center p-3 bg-secondary rounded-lg">
@@ -229,7 +229,7 @@ export default function Dashboard({
                             </CardContent>
                         ) : (
                             <CardContent className="py-8 text-center">
-                                <p className="text-muted-foreground">Completa un entrenamiento para ver tu actividad aquí.</p>
+                                <p className="text-muted-foreground">Completa un entrenamiento para ver tu historial aquí.</p>
                             </CardContent>
                         )}
                     </Card>
