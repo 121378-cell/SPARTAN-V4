@@ -34,7 +34,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
     injuries: ''
   });
   const [previousProgress, setPreviousProgress] = useState<string>('');
-  const [primaryGoal, setPrimaryGoal] = useState<string>('hypertrophy');
+  const [primaryGoal, setPrimaryGoal] = useState<string>('');
   const [goals, setGoals] = useState<Record<string, boolean>>({
     strength: true,
     hypertrophy: false,
