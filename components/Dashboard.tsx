@@ -1,9 +1,8 @@
-
-
 "use client";
 
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, Badge } from "./ui";
-import { User, Settings, Plus, Utensils, Clock, Zap, Droplets, StretchHorizontal, Heart, ClipboardList, BarChart, CheckCircle, ArrowRight, Ruler } from "lucide-react";
+// FIX: Replaced non-existent 'Fire' icon with 'Flame'.
+import { User, Settings, Plus, Utensils, Clock, Zap, Droplets, StretchHorizontal, Heart, ClipboardList, BarChart, CheckCircle, ArrowRight, Ruler, Flame } from "lucide-react";
 import type { UserData, WorkoutPlan, ProgressData } from '../lib/types';
 
 interface DashboardProps {
@@ -113,9 +112,21 @@ export default function Dashboard({
                                 <CardDescription className="text-primary-foreground/80">Siguiente Entrenamiento</CardDescription>
                                 <CardTitle className="text-2xl mt-1">{nextWorkout.name}</CardTitle>
                                 <p className="mt-2 text-sm text-primary-foreground/80 line-clamp-2">{nextWorkout.description}</p>
-                                <Button variant="secondary" size="lg" className="mt-4" onClick={() => onSelectWorkout(nextWorkout)}>
-                                    Comenzar Entrenamiento
-                                </Button>
+                                <div className="flex items-center gap-2 mt-4">
+                                    <Button variant="secondary" size="lg" onClick={() => onSelectWorkout(nextWorkout)}>
+                                        Comenzar Entrenamiento
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="lg"
+                                        className="text-primary-foreground hover:bg-white/20"
+                                        onClick={() => alert('Iniciando calentamiento dinámico de 5-10 minutos...')}
+                                    >
+                                        {/* FIX: Replaced non-existent 'Fire' icon with 'Flame'. */}
+                                        <Flame className="mr-2 h-5 w-5" />
+                                        Iniciar Calentamiento
+                                    </Button>
+                                </div>
                             </>
                         ) : (
                             <>
