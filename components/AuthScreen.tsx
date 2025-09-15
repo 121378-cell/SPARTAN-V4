@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label } from "./ui";
+import { Logo } from "./Logo";
 
 interface AuthScreenProps {
     onLoginSuccess: () => void;
@@ -27,8 +28,9 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-center">
+                <CardHeader className="items-center">
+                    <Logo />
+                    <CardTitle className="text-center pt-3">
                         {authView === 'login' ? 'Bienvenido de nuevo' : 'Crear cuenta'}
                     </CardTitle>
                     <CardDescription className="text-center">

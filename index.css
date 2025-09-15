@@ -138,6 +138,8 @@ body {
 .from-blue-50 { --tw-gradient-from: #eff6ff; --tw-gradient-to: rgb(239 246 255 / 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
 .to-indigo-50 { --tw-gradient-to: #eef2ff; }
 .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+.fill-primary { fill: hsl(var(--primary)); }
+.stroke-primary-foreground { stroke: hsl(var(--primary-foreground)); }
 
 
 /* Component Styles */
