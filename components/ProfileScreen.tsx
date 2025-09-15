@@ -74,12 +74,13 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
 
                         <div className="mt-4 space-y-2">
                             <Label>Nivel de Condición Física</Label>
-                            <div className="flex gap-4">
+                            <div className="flex flex-wrap gap-2">
                                 {(['beginner', 'intermediate', 'advanced'] as const).map(level => (
                                     <Button
                                         key={level}
-                                        variant={userData.fitnessLevel === level ? 'default' : 'outline'}
-                                        size="default"
+                                        variant={userData.fitnessLevel === level ? 'default' : 'secondary'}
+                                        size="sm"
+                                        className="rounded-full"
                                         onClick={() => setUserData({ ...userData, fitnessLevel: level })}
                                     >
                                         {level === 'beginner' ? 'Principiante' : level === 'intermediate' ? 'Intermedio' : 'Avanzado'}
@@ -94,8 +95,9 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                 {['Pérdida de Peso', 'Ganancia Muscular', 'Resistencia', 'Flexibilidad', 'Fuerza'].map(goal => (
                                     <Button
                                         key={goal}
-                                        variant={userData.goals.includes(goal) ? 'default' : 'outline'}
+                                        variant={userData.goals.includes(goal) ? 'default' : 'secondary'}
                                         size="sm"
+                                        className="rounded-full"
                                         onClick={() => handleGoalToggle(goal)}
                                     >
                                         {goal}
