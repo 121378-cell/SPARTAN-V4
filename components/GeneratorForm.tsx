@@ -37,6 +37,7 @@ const goalLabels: Record<string, string> = {
     definition: 'Definición',
     mobility: 'Movilidad',
     endurance: 'Resistencia',
+    cardio: 'Salud Cardiovascular',
 };
 
 export default function GeneratorForm({
@@ -183,7 +184,8 @@ export default function GeneratorForm({
                                     goal === 'hypertrophy' ? 'Hipertrofia (8-12 reps)' :
                                     goal === 'endurance' ? 'Resistencia (15-20 reps)' :
                                     goal === 'mobility' ? 'Movilidad (10-15 reps)' :
-                                    goal === 'definition' ? 'Definición' : ''
+                                    goal === 'definition' ? 'Definición' :
+                                    goal === 'cardio' ? 'Salud Cardiovascular (ej. HIIT, LISS)' : ''
                                 )}
                             </span>
                         </div>

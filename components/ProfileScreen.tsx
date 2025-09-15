@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label } from "./ui";
@@ -120,7 +121,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                             <div className="mt-4 space-y-2">
                                 <Label>Objetivos de Fitness</Label>
                                 <div className="flex flex-wrap gap-2">
-                                    {['Pérdida de Peso', 'Ganancia Muscular', 'Resistencia', 'Flexibilidad', 'Fuerza'].map(goal => (
+                                    {['Pérdida de Peso', 'Ganancia Muscular', 'Resistencia', 'Flexibilidad', 'Fuerza', 'Salud Cardiovascular'].map(goal => (
                                         <Button
                                             key={goal}
                                             variant={userData.goals.includes(goal) ? 'default' : 'secondary'}

@@ -40,7 +40,8 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
     hypertrophy: false,
     definition: false,
     mobility: true,
-    endurance: false
+    endurance: false,
+    cardio: false,
   });
 
   // State for the generated plan and loading status
