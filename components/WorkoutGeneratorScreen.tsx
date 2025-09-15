@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -44,6 +45,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
   // State for the generated plan and loading status
   const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
   const [isGeneratingState, setIsGeneratingState] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const isMounted = useRef(true);
 
@@ -58,6 +60,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
   const handleGeneratePlan = async () => {
     setIsGeneratingState(true);
     setIsGenerating(true);
+    setFormErrors({});
     setError(null);
     setGeneratedPlan(null);
 
@@ -65,8 +68,16 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       .filter(([_, selected]) => selected)
       .map(([goal]) => goal);
     
+    const newErrors: Record<string, string> = {};
     if (activeGoals.length === 0) {
-        setError("Por favor, selecciona al menos un objetivo de entrenamiento.");
+        newErrors.goals = "Por favor, selecciona al menos un objetivo de entrenamiento.";
+    }
+    if (injuryHistory.hasInjuries && !injuryHistory.injuries.trim()) {
+        newErrors.injuries = "Por favor, describe tus lesiones para continuar.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+        setFormErrors(newErrors);
         setIsGeneratingState(false);
         setIsGenerating(false);
         return;
@@ -114,6 +125,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
     previousProgress, setPreviousProgress,
     goals, setGoals,
     isGenerating: isGeneratingState,
+    formErrors,
     onGenerate: handleGeneratePlan
   };
   

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -14,6 +15,7 @@ interface WorkoutEditorScreenProps {
 
 export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: WorkoutEditorScreenProps) {
     const [plan, setPlan] = useState<WorkoutPlan>(initialPlan);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handlePlanChange = (field: 'name' | 'description', value: string) => {
         setPlan(prev => ({ ...prev, [field]: value }));
@@ -47,7 +49,22 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
     };
     
     const handleSaveChanges = () => {
-        onSave(plan);
+        const newErrors: Record<string, string> = {};
+        plan.days.forEach((day, dayIndex) => {
+            day.exercises.forEach((ex, exIndex) => {
+                const keyPrefix = `${dayIndex}-${exIndex}`;
+                if (!ex.name.trim()) newErrors[`${keyPrefix}-name`] = "El nombre no puede estar vacío.";
+                if (ex.sets <= 0 || !Number.isInteger(ex.sets)) newErrors[`${keyPrefix}-sets`] = "Debe ser un número entero positivo.";
+                if (!ex.reps.trim()) newErrors[`${keyPrefix}-reps`] = "Las repeticiones no pueden estar vacías.";
+                if (ex.rest < 0 || !Number.isInteger(ex.rest)) newErrors[`${keyPrefix}-rest`] = "Debe ser un número entero no negativo.";
+            });
+        });
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length === 0) {
+            onSave(plan);
+        }
     };
 
     return (
@@ -107,19 +124,23 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-2 col-span-2">
                                                         <Label htmlFor={`exName-${dayIndex}-${exIndex}`}>Nombre del Ejercicio</Label>
-                                                        <Input id={`exName-${dayIndex}-${exIndex}`} value={exercise.name} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'name', e.target.value)} />
+                                                        <Input id={`exName-${dayIndex}-${exIndex}`} value={exercise.name} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'name', e.target.value)} className={errors[`${dayIndex}-${exIndex}-name`] ? 'border-red-500' : ''} />
+                                                        {errors[`${dayIndex}-${exIndex}-name`] && <p className="text-sm text-red-600">{errors[`${dayIndex}-${exIndex}-name`]}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor={`exSets-${dayIndex}-${exIndex}`}>Series</Label>
-                                                        <Input id={`exSets-${dayIndex}-${exIndex}`} type="number" value={exercise.sets} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'sets', parseInt(e.target.value) || 0)} />
+                                                        <Input id={`exSets-${dayIndex}-${exIndex}`} type="number" value={exercise.sets} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'sets', parseInt(e.target.value) || 0)} className={errors[`${dayIndex}-${exIndex}-sets`] ? 'border-red-500' : ''} />
+                                                        {errors[`${dayIndex}-${exIndex}-sets`] && <p className="text-sm text-red-600">{errors[`${dayIndex}-${exIndex}-sets`]}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor={`exReps-${dayIndex}-${exIndex}`}>Repeticiones</Label>
-                                                        <Input id={`exReps-${dayIndex}-${exIndex}`} value={exercise.reps} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'reps', e.target.value)} />
+                                                        <Input id={`exReps-${dayIndex}-${exIndex}`} value={exercise.reps} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'reps', e.target.value)} className={errors[`${dayIndex}-${exIndex}-reps`] ? 'border-red-500' : ''} />
+                                                        {errors[`${dayIndex}-${exIndex}-reps`] && <p className="text-sm text-red-600">{errors[`${dayIndex}-${exIndex}-reps`]}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor={`exRest-${dayIndex}-${exIndex}`}>Descanso (s)</Label>
-                                                        <Input id={`exRest-${dayIndex}-${exIndex}`} type="number" value={exercise.rest} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'rest', parseInt(e.target.value) || 0)} />
+                                                        <Input id={`exRest-${dayIndex}-${exIndex}`} type="number" value={exercise.rest} onChange={(e) => handleExerciseChange(dayIndex, exIndex, 'rest', parseInt(e.target.value) || 0)} className={errors[`${dayIndex}-${exIndex}-rest`] ? 'border-red-500' : ''} />
+                                                        {errors[`${dayIndex}-${exIndex}-rest`] && <p className="text-sm text-red-600">{errors[`${dayIndex}-${exIndex}-rest`]}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor={`exEquip-${dayIndex}-${exIndex}`}>Equipamiento</Label>

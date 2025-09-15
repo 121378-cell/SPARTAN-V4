@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -27,6 +28,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<'recipes' | 'shopping'>('recipes');
   const [expandedRecipes, setExpandedRecipes] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof MacroGoals, string>>>({});
   const [error, setError] = useState<string | null>(null);
   const isMounted = useRef(true);
 
@@ -36,7 +38,21 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
     };
   }, []);
 
+  const validateMacros = (): boolean => {
+    const newErrors: Partial<Record<keyof MacroGoals, string>> = {};
+    if (macroGoals.calories <= 0) newErrors.calories = "Debe ser > 0.";
+    if (macroGoals.protein <= 0) newErrors.protein = "Debe ser > 0.";
+    if (macroGoals.carbs <= 0) newErrors.carbs = "Debe ser > 0.";
+    if (macroGoals.fats <= 0) newErrors.fats = "Debe ser > 0.";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const generateRecipes = async () => {
+    if (!validateMacros()) {
+        return;
+    }
     setIsGenerating(true);
     setError(null);
     setGeneratedRecipes([]);
@@ -134,6 +150,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                     value={macroGoals.calories}
                     onChange={(e) => setMacroGoals({...macroGoals, calories: parseInt(e.target.value) || 0})}
                   />
+                  {errors.calories && <p className="text-sm text-red-600 mt-1">{errors.calories}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="protein">Proteína (g)</Label>
@@ -143,6 +160,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                     value={macroGoals.protein}
                     onChange={(e) => setMacroGoals({...macroGoals, protein: parseInt(e.target.value) || 0})}
                   />
+                  {errors.protein && <p className="text-sm text-red-600 mt-1">{errors.protein}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="carbs">Carbohidratos (g)</Label>
@@ -152,6 +170,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                     value={macroGoals.carbs}
                     onChange={(e) => setMacroGoals({...macroGoals, carbs: parseInt(e.target.value) || 0})}
                   />
+                  {errors.carbs && <p className="text-sm text-red-600 mt-1">{errors.carbs}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="fats">Grasas (g)</Label>
@@ -161,6 +180,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
                     value={macroGoals.fats}
                     onChange={(e) => setMacroGoals({...macroGoals, fats: parseInt(e.target.value) || 0})}
                   />
+                  {errors.fats && <p className="text-sm text-red-600 mt-1">{errors.fats}</p>}
                 </div>
               </CardContent>
             </Card>

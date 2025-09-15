@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea } from "./ui";
@@ -20,6 +21,7 @@ interface GeneratorFormProps {
     goals: Record<string, boolean>;
     setGoals: (goals: Record<string, boolean>) => void;
     isGenerating: boolean;
+    formErrors: Record<string, string>;
     onGenerate: () => void;
 }
 
@@ -31,6 +33,7 @@ export default function GeneratorForm({
     injuryHistory, setInjuryHistory,
     previousProgress, setPreviousProgress,
     goals, setGoals,
+    formErrors,
     isGenerating, onGenerate
 }: GeneratorFormProps) {
 
@@ -135,6 +138,7 @@ export default function GeneratorForm({
                             </span>
                         </div>
                     ))}
+                    {formErrors.goals && <p className="text-sm text-red-600 mt-1">{formErrors.goals}</p>}
                 </CardContent>
             </Card>
 
@@ -187,6 +191,7 @@ export default function GeneratorForm({
                                 value={injuryHistory.injuries}
                                 onChange={(e) => setInjuryHistory({ ...injuryHistory, injuries: e.target.value })}
                             />
+                            {formErrors.injuries && <p className="text-sm text-red-600 mt-1">{formErrors.injuries}</p>}
                         </div>
                     )}
                 </CardContent>
