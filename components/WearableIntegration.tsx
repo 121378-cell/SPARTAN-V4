@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -67,7 +68,7 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
     setLoading(true);
     
     // Simulate API call
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       let data: WearableData;
       
       if (selectedDevice.includes('Garmin')) {
@@ -101,6 +102,11 @@ export default function WearableIntegration({ onBack }: WearableIntegrationProps
       generateHistoricalData();
       setLoading(false);
     }, 1000);
+
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      clearTimeout(timer);
+    };
   }, [selectedDevice, timeframe]);
 
   const generateRecommendations = (data: WearableData) => {

@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Progress, Input, Label, Alert, AlertDescription, AlertTitle } from "./ui";
 import { Activity, AlertCircle, RotateCw, StretchHorizontal, ArrowLeft } from "lucide-react";
 import type { BodyPart, OverloadData, CorrectiveExercise } from "../lib/types";
@@ -26,6 +27,13 @@ export default function OverloadDetection({ onBack }: OverloadDetectionProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showDetails, setShowDetails] = useState<BodyPart | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const detectOverload = async () => {
     setIsAnalyzing(true);
@@ -35,13 +43,19 @@ export default function OverloadDetection({ onBack }: OverloadDetectionProps) {
     
     try {
         const result = await detectOverloadApi(userInput);
-        setOverloadData(result.overloadData);
-        setCorrectiveExercises(result.correctiveExercises);
+        if (isMounted.current) {
+            setOverloadData(result.overloadData);
+            setCorrectiveExercises(result.correctiveExercises);
+        }
     } catch (e) {
         console.error("Failed to detect overload:", e);
-        setError("An error occurred during analysis. Please try again.");
+        if (isMounted.current) {
+            setError("An error occurred during analysis. Please try again.");
+        }
     } finally {
-        setIsAnalyzing(false);
+        if (isMounted.current) {
+            setIsAnalyzing(false);
+        }
     }
   };
 

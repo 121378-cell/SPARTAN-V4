@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label, Badge, Alert, AlertTitle, AlertDescription } from "./ui";
 import { Check, Clock, ShoppingCart, Utensils, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import type { MacroGoals, Recipe, ShoppingListItem } from "../lib/types";
@@ -27,6 +28,13 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
   const [activeTab, setActiveTab] = useState<'recipes' | 'shopping'>('recipes');
   const [expandedRecipes, setExpandedRecipes] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const generateRecipes = async () => {
     setIsGenerating(true);
@@ -40,18 +48,24 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
             allergies,
         });
 
-        const newRecipes = recipesFromApi.map(recipe => ({
-            ...recipe,
-            id: Math.random().toString(36).substring(2, 9),
-        }));
+        if (isMounted.current) {
+            const newRecipes = recipesFromApi.map(recipe => ({
+                ...recipe,
+                id: Math.random().toString(36).substring(2, 9),
+            }));
 
-        setGeneratedRecipes(newRecipes);
-        generateShoppingList(newRecipes);
+            setGeneratedRecipes(newRecipes);
+            generateShoppingList(newRecipes);
+        }
     } catch (e) {
         console.error("Failed to generate recipes:", e);
-        setError("Lo sentimos, no pudimos generar recetas en este momento. Por favor, inténtalo de nuevo.");
+        if (isMounted.current) {
+            setError("Lo sentimos, no pudimos generar recetas en este momento. Por favor, inténtalo de nuevo.");
+        }
     } finally {
-        setIsGenerating(false);
+        if (isMounted.current) {
+            setIsGenerating(false);
+        }
     }
   };
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import type { UserData, WorkoutPlan, ProgressData } from "./lib/types";
+import type { UserData, WorkoutPlan, ProgressData, BodyMeasurement } from "./lib/types";
 import AuthScreen from "./components/AuthScreen";
 import Dashboard from "./components/Dashboard";
 import ProfileScreen from "./components/ProfileScreen";
@@ -15,10 +15,11 @@ import WearableIntegration from "./components/WearableIntegration";
 import BloodTestAnalyzer from "./components/BloodTestAnalyzer";
 import OverloadDetection from "./components/OverloadDetection";
 import WorkoutEditorScreen from "./components/WorkoutEditorScreen";
+import BodyMeasurementScreen from "./components/BodyMeasurementScreen";
 
 // App's main component, acts as a router and state manager
 export default function App() {
-  type Screen = 'auth' | 'dashboard' | 'generator' | 'profile' | 'workoutDetail' | 'exerciseFormChecker' | 'recipeGenerator' | 'circadianPlanner' | 'wearableIntegration' | 'bloodTestAnalyzer' | 'overloadDetection' | 'workoutEditor';
+  type Screen = 'auth' | 'dashboard' | 'generator' | 'profile' | 'workoutDetail' | 'exerciseFormChecker' | 'recipeGenerator' | 'circadianPlanner' | 'wearableIntegration' | 'bloodTestAnalyzer' | 'overloadDetection' | 'workoutEditor' | 'bodyMeasurement';
   
   const [currentScreen, setCurrentScreen] = useState<Screen>('auth');
   
@@ -34,6 +35,7 @@ export default function App() {
 
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
   const [progressData, setProgressData] = useState<ProgressData[]>([]);
+  const [bodyMeasurements, setBodyMeasurements] = useState<BodyMeasurement[]>([]);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutPlan | null>(null);
   const [exerciseToCheck, setExerciseToCheck] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -102,6 +104,7 @@ export default function App() {
   const handleNavigateToWearable = () => setCurrentScreen('wearableIntegration');
   const handleNavigateToBloodTestAnalyzer = () => setCurrentScreen('bloodTestAnalyzer');
   const handleNavigateToOverloadDetection = () => setCurrentScreen('overloadDetection');
+  const handleNavigateToBodyMeasurement = () => setCurrentScreen('bodyMeasurement');
 
 
   const renderScreen = () => {
@@ -123,6 +126,7 @@ export default function App() {
                   onNavigateToWearable={handleNavigateToWearable}
                   onNavigateToBloodTestAnalyzer={handleNavigateToBloodTestAnalyzer}
                   onNavigateToOverloadDetection={handleNavigateToOverloadDetection}
+                  onNavigateToBodyMeasurement={handleNavigateToBodyMeasurement}
                 />;
       
       case 'generator':
@@ -184,6 +188,13 @@ export default function App() {
       
       case 'overloadDetection':
         return <OverloadDetection onBack={handleBackToDashboard} />;
+        
+      case 'bodyMeasurement':
+        return <BodyMeasurementScreen
+                  onBack={handleBackToDashboard}
+                  measurements={bodyMeasurements}
+                  setMeasurements={setBodyMeasurements}
+                />;
 
       default:
         return <AuthScreen onLoginSuccess={handleLoginSuccess} />;

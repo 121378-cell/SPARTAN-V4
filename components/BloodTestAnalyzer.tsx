@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, Input, Label, Badge, Alert, AlertTitle, AlertDescription } from "./ui";
 import { ArrowLeft, Droplets, FlaskConical, Sparkles, AlertTriangle, Pill, Apple, Dumbbell } from "lucide-react";
 import { analyzeBloodTestApi } from "../lib/api";
@@ -28,6 +29,13 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
     const [analysis, setAnalysis] = useState<BloodTestAnalysis | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     const handleInputChange = (marker: string, value: string) => {
         setBiomarkers(prev => ({
@@ -55,14 +63,20 @@ export default function BloodTestAnalyzer({ onBack }: BloodTestAnalyzerProps) {
 
         try {
             const result = await analyzeBloodTestApi(filledMarkers);
-            // FIX: Removed unnecessary translation logic. The API is configured to return Spanish,
-            // and types are now aligned. This resolves the type error.
-            setAnalysis(result);
+            if (isMounted.current) {
+                // FIX: Removed unnecessary translation logic. The API is configured to return Spanish,
+                // and types are now aligned. This resolves the type error.
+                setAnalysis(result);
+            }
         } catch (e) {
             console.error("Analysis failed:", e);
-            setError("No se pudieron analizar los resultados. Comprueba tu conexión e inténtalo de nuevo.");
+            if (isMounted.current) {
+                setError("No se pudieron analizar los resultados. Comprueba tu conexión e inténtalo de nuevo.");
+            }
         } finally {
-            setIsLoading(false);
+            if (isMounted.current) {
+                setIsLoading(false);
+            }
         }
     };
     

@@ -145,3 +145,13 @@ export type CorrectiveExercise = {
   videoUrl?: string;
   targetArea: BodyPart[];
 };
+
+// Types for Body Measurement Tracker
+export type BodyMeasurement = {
+  date: string; // ISO string for date e.g. "2024-05-21"
+  weight?: number;
+  chest?: number;
+  waist?: number;
+  hips?: number;
+  biceps?: number;
+};

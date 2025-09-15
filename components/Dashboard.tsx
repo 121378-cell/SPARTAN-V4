@@ -1,8 +1,9 @@
+
+
 "use client";
 
-import { useState } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, Badge } from "./ui";
-import { Calendar, Clock, Heart, User, Settings, Plus, Utensils, Zap, Droplets, StretchHorizontal } from "lucide-react";
+import { User, Settings, Plus, Utensils, Clock, Zap, Droplets, StretchHorizontal, Heart, ClipboardList, BarChart, CheckCircle, ArrowRight, Ruler } from "lucide-react";
 import type { UserData, WorkoutPlan, ProgressData } from '../lib/types';
 
 interface DashboardProps {
@@ -18,7 +19,43 @@ interface DashboardProps {
     onNavigateToWearable: () => void;
     onNavigateToBloodTestAnalyzer: () => void;
     onNavigateToOverloadDetection: () => void;
+    onNavigateToBodyMeasurement: () => void;
 }
+
+const StatCard = ({ icon, title, value, subtitle }: { icon: React.ReactNode, title: string, value: string, subtitle?: string }) => (
+    <Card>
+        <CardHeader className="p-4">
+            <div className="flex items-center gap-3">
+                <div className="bg-secondary p-2 rounded-lg">
+                    {icon}
+                </div>
+                <div>
+                    <CardDescription>{title}</CardDescription>
+                    <CardTitle className="text-xl">{value}</CardTitle>
+                </div>
+            </div>
+            {subtitle && <p className="text-xs text-muted-foreground pt-2">{subtitle}</p>}
+        </CardHeader>
+    </Card>
+);
+
+const ToolCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick: () => void }) => (
+    <Card 
+        className="cursor-pointer hover:border-primary transition-colors group"
+        onClick={onClick}
+    >
+        <CardHeader>
+            <div className="flex justify-between items-start">
+                <div className="bg-secondary p-3 rounded-lg text-primary">
+                    {icon}
+                </div>
+                <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <CardTitle className="pt-4">{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+        </CardHeader>
+    </Card>
+);
 
 export default function Dashboard({
     userData,
@@ -33,15 +70,29 @@ export default function Dashboard({
     onNavigateToWearable,
     onNavigateToBloodTestAnalyzer,
     onNavigateToOverloadDetection,
+    onNavigateToBodyMeasurement,
 }: DashboardProps) {
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'workouts' | 'progress'>('dashboard');
+    
+    const nextWorkout = workoutPlans.length > 0 ? workoutPlans[0] : null;
+
+    const tools = [
+        { icon: <Utensils className="h-6 w-6" />, title: "Planifica tu Nutrición", description: "Genera recetas inteligentes según tus objetivos de macros.", onClick: onNavigateToRecipes },
+        { icon: <Clock className="h-6 w-6" />, title: "Optimizador Circadiano", description: "Sincroniza tu estilo de vida con tu reloj biológico.", onClick: onNavigateToCircadian },
+        { icon: <Zap className="h-6 w-6" />, title: "Integración con Wearables", description: "Conecta tus dispositivos para obtener información detallada.", onClick: onNavigateToWearable },
+        { icon: <Droplets className="h-6 w-6" />, title: "Análisis de Sangre", description: "Obtén información de tus análisis con IA.", onClick: onNavigateToBloodTestAnalyzer },
+        { icon: <StretchHorizontal className="h-6 w-6" />, title: "Detección de Sobrecarga", description: "Identifica la tensión y obtén ejercicios correctivos.", onClick: onNavigateToOverloadDetection },
+        { icon: <Ruler className="h-6 w-6" />, title: "Medidas Corporales", description: "Realiza un seguimiento de tu progreso físico con mediciones detalladas.", onClick: onNavigateToBodyMeasurement },
+    ];
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <h1 className="text-xl font-bold text-primary">Entrenador Fitness IA</h1>
-                    <div className="flex items-center gap-4">
+            <header className="bg-white sticky top-0 z-10 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold text-primary">Hola, {userData.name.split(' ')[0]}!</h1>
+                        <p className="text-muted-foreground">Lista para superar tus límites hoy?</p>
+                    </div>
+                    <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" onClick={onProfileClick}>
                             <User className="h-5 w-5" />
                         </Button>
@@ -52,238 +103,137 @@ export default function Dashboard({
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 py-8">
-                <div className="flex border-b mb-8">
-                    <Button
-                        variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'}
-                        size="default"
-                        onClick={() => setActiveTab('dashboard')}
-                    >
-                        Panel
-                    </Button>
-                    <Button
-                        variant={activeTab === 'workouts' ? 'secondary' : 'ghost'}
-                        size="default"
-                        onClick={() => setActiveTab('workouts')}
-                    >
-                        Entrenamientos
-                    </Button>
-                    <Button
-                        variant={activeTab === 'progress' ? 'secondary' : 'ghost'}
-                        size="default"
-                        onClick={() => setActiveTab('progress')}
-                    >
-                        Progreso
-                    </Button>
-                </div>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                
+                {/* Next Workout or CTA */}
+                <Card className="bg-primary text-primary-foreground">
+                    <CardContent className="p-6">
+                        {nextWorkout ? (
+                            <>
+                                <CardDescription className="text-primary-foreground/80">Siguiente Entrenamiento</CardDescription>
+                                <CardTitle className="text-2xl mt-1">{nextWorkout.name}</CardTitle>
+                                <p className="mt-2 text-sm text-primary-foreground/80 line-clamp-2">{nextWorkout.description}</p>
+                                <Button variant="secondary" size="lg" className="mt-4" onClick={() => onSelectWorkout(nextWorkout)}>
+                                    Comenzar Entrenamiento
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <CardTitle className="text-2xl">¡Bienvenido a tu viaje de fitness!</CardTitle>
+                                <p className="mt-2 text-sm text-primary-foreground/80">Genera tu primer plan de entrenamiento personalizado con IA para empezar.</p>
+                                <Button variant="secondary" size="lg" className="mt-4" onClick={onGenerateWorkout} disabled={isGeneratingWorkout}>
+                                    {isGeneratingWorkout ? 'Generando...' : 'Generar Nuevo Plan'}
+                                </Button>
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
 
-                {activeTab === 'dashboard' && (
-                    <div className="space-y-8">
-                        <div className="grid gap-6 md:grid-cols-3">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Entrenamientos Completados</CardTitle>
-                                    <Heart className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{progressData.length}</div>
-                                    <p className="text-xs text-muted-foreground">¡Sigue con el buen trabajo!</p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Último Plan de Entrenamiento</CardTitle>
-                                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold truncate">
-                                        {workoutPlans.length > 0 ? workoutPlans[0].name : 'Ninguno'}
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {workoutPlans.length > 0 ? (workoutPlans[0].duration ? `${workoutPlans[0].duration} min` : '') : 'Genera un plan'}
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Nivel de Condición Física</CardTitle>
-                                    <User className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold capitalize">{userData.fitnessLevel === 'beginner' ? 'Principiante' : userData.fitnessLevel === 'intermediate' ? 'Intermedio' : 'Avanzado'}</div>
-                                    <p className="text-xs text-muted-foreground truncate">{userData.goals.join(', ')}</p>
-                                </CardContent>
-                            </Card>
+                {/* Quick Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard 
+                        icon={<Heart className="h-5 w-5 text-red-500" />} 
+                        title="Completados"
+                        value={progressData.length.toString()}
+                    />
+                     <StatCard 
+                        icon={<ClipboardList className="h-5 w-5 text-blue-500" />} 
+                        title="Planes Activos"
+                        value={workoutPlans.length.toString()}
+                    />
+                     <StatCard 
+                        icon={<BarChart className="h-5 w-5 text-green-500" />} 
+                        title="Nivel Actual"
+                        value={userData.fitnessLevel.charAt(0).toUpperCase() + userData.fitnessLevel.slice(1)}
+                    />
+                     <StatCard 
+                        icon={<Zap className="h-5 w-5 text-yellow-500" />} 
+                        title="Objetivo Principal"
+                        value={userData.goals[0] || 'No definido'}
+                    />
+                </div>
+                
+                {/* My Workout Plans */}
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold">Mis Planes de Entrenamiento</h2>
+                        <Button onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="outline" size="sm">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Nuevo Plan
+                        </Button>
+                    </div>
+                    {workoutPlans.length > 0 ? (
+                        <div className="flex overflow-x-auto space-x-4 pb-4 -m-2 p-2">
+                           {workoutPlans.map(plan => (
+                                <Card 
+                                    key={plan.id} 
+                                    className="min-w-[250px] cursor-pointer hover:shadow-lg transition-shadow flex-shrink-0"
+                                    onClick={() => onSelectWorkout(plan)}
+                                >
+                                    <CardHeader className="p-4">
+                                        <CardTitle className="text-base truncate">{plan.name}</CardTitle>
+                                        <CardDescription className="line-clamp-2 h-10">{plan.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="p-4 pt-0">
+                                        <div className="flex flex-wrap gap-1">
+                                            {plan.focus.slice(0, 2).map(f => <Badge key={f} variant="secondary">{f}</Badge>)}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                           ))}
                         </div>
+                    ) : (
                         <Card>
-                            <CardHeader>
-                                <CardTitle>¿Listo para un nuevo reto?</CardTitle>
-                                <CardDescription>Genera un nuevo plan de entrenamiento personalizado con IA basado en tu perfil actual.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button onClick={onGenerateWorkout} disabled={isGeneratingWorkout} size="lg" variant="default">
-                                    {isGeneratingWorkout ? 'Generando...' : 'Generar Nuevo Plan de Entrenamiento'}
+                            <CardContent className="py-8 text-center">
+                                <p className="text-muted-foreground">Aún no tienes planes de entrenamiento.</p>
+                                {/* FIX: Added missing 'size' prop to Button component */}
+                                <Button className="mt-3" onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="default" size="default">
+                                    {isGeneratingWorkout ? 'Generando...' : 'Crea tu Primer Plan'}
                                 </Button>
                             </CardContent>
                         </Card>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Utensils className="h-5 w-5" />
-                                        Planifica tu Nutrición
-                                    </CardTitle>
-                                    <CardDescription>Genera planes de comidas y recetas inteligentes según tus objetivos de macros.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button onClick={onNavigateToRecipes} size="default" variant="default">
-                                        Ir al Generador de Recetas
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                             <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Clock className="h-5 w-5" />
-                                        Optimizador de Ritmo Circadiano
-                                    </CardTitle>
-                                    <CardDescription>Sincroniza tu estilo de vida con tu reloj biológico para un rendimiento óptimo.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button onClick={onNavigateToCircadian} size="default" variant="default">
-                                        Optimizar mi Ritmo
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                             <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Zap className="h-5 w-5" />
-                                        Integración con Wearables
-                                    </CardTitle>
-                                    <CardDescription>Conecta tus dispositivos para obtener información detallada sobre tu salud.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button onClick={onNavigateToWearable} size="default" variant="default">
-                                        Conectar y Analizar
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                             <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Droplets className="h-5 w-5" />
-                                        Analizador de Análisis de Sangre
-                                    </CardTitle>
-                                    <CardDescription>Obtén información de tus análisis de sangre con IA para un rendimiento máximo.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button onClick={onNavigateToBloodTestAnalyzer} size="default" variant="default">
-                                        Analizar mis Resultados
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <StretchHorizontal className="h-5 w-5" />
-                                        Detección de Sobrecarga
-                                    </CardTitle>
-                                    <CardDescription>Identifica la tensión muscular y obtén recomendaciones de ejercicios correctivos.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button onClick={onNavigateToOverloadDetection} size="default" variant="default">
-                                        Analizar Ahora
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                {activeTab === 'workouts' && (
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-bold">Tus Planes de Entrenamiento</h2>
-                            <Button onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="default" size="default">
-                                <Plus className="mr-2 h-4 w-4" />
-                                {isGeneratingWorkout ? 'Generando...' : 'Nuevo Plan'}
-                            </Button>
-                        </div>
-                        {workoutPlans.length === 0 ? (
-                            <Card>
-                                <CardContent className="py-12 text-center">
-                                    <p className="text-muted-foreground">Aún no hay planes de entrenamiento. ¡Genera tu primer plan con IA!</p>
-                                    <Button className="mt-4" onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="default" size="default">
-                                        {isGeneratingWorkout ? 'Generando...' : 'Generar Plan de Entrenamiento'}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                {workoutPlans.map(plan => (
-                                    <Card
-                                        key={plan.id}
-                                        className="cursor-pointer hover:shadow-lg transition-shadow"
-                                        onClick={() => onSelectWorkout(plan)}
-                                    >
-                                        <CardHeader>
-                                            <CardTitle className="truncate">{plan.name}</CardTitle>
-                                            <CardDescription className="line-clamp-2 h-10">{plan.description}</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <Clock className="h-4 w-4" />
-                                                {plan.duration && <span>{plan.duration} minutos</span>}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        )}
+                {/* Explore Tools */}
+                 <div className="space-y-4">
+                    <h2 className="text-xl font-bold">Explora tus Herramientas</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {tools.map(tool => (
+                            <ToolCard key={tool.title} {...tool} />
+                        ))}
                     </div>
-                )}
+                </div>
 
-                {activeTab === 'progress' && (
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold">Tu Progreso</h2>
-                        {progressData.length === 0 ? (
-                            <Card>
-                                <CardContent className="py-12 text-center">
-                                    <p className="text-muted-foreground">Aún no hay datos de progreso. ¡Completa un entrenamiento para seguir tu progreso!</p>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Historial de Entrenamientos</CardTitle>
-                                    <CardDescription>Tus sesiones de entrenamiento completadas, ordenadas por las más recientes.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-4">
-                                        {progressData.map((progress, index) => {
-                                            const workout = workoutPlans.find(w => w.id === progress.workoutId);
-                                            return (
-                                                <div key={index} className="border rounded-lg p-4 flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-semibold">{workout?.name || 'Entrenamiento Desconocido'}</h3>
-                                                        <p className="text-sm text-muted-foreground">{progress.date.toLocaleDateString()}</p>
-                                                        {progress.notes && (
-                                                            <p className="mt-2 text-sm text-muted-foreground">Notas: {progress.notes}</p>
-                                                        )}
-                                                    </div>
-                                                    <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
-                                                        Completado
-                                                    </Badge>
+                {/* Recent Activity */}
+                <div className="space-y-4">
+                    <h2 className="text-xl font-bold">Actividad Reciente</h2>
+                     <Card>
+                        {progressData.length > 0 ? (
+                             <CardContent className="p-4 space-y-3">
+                                {progressData.slice(0, 3).map((progress) => {
+                                    const workout = workoutPlans.find(w => w.id === progress.workoutId);
+                                    return (
+                                        <div key={progress.date.toISOString()} className="flex justify-between items-center p-3 bg-secondary rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircle className="h-5 w-5 text-green-600" />
+                                                <div>
+                                                    <p className="font-semibold">{workout?.name || 'Entrenamiento'}</p>
+                                                    <p className="text-sm text-muted-foreground">{progress.date.toLocaleDateString()}</p>
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                            </div>
+                                            <Badge variant="outline">Completado</Badge>
+                                        </div>
+                                    );
+                                })}
+                            </CardContent>
+                        ) : (
+                            <CardContent className="py-8 text-center">
+                                <p className="text-muted-foreground">Completa un entrenamiento para ver tu actividad aquí.</p>
+                            </CardContent>
                         )}
-                    </div>
-                )}
+                    </Card>
+                </div>
             </main>
         </div>
     );

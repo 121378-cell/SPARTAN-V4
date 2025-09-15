@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { generateMultiGoalWorkoutPlanApi } from "../lib/api";
 import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays, WorkoutPlan } from "../lib/types";
 import GeneratorForm from "./GeneratorForm";
@@ -44,6 +45,15 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
   const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
   const [isGeneratingState, setIsGeneratingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
 
   const handleGeneratePlan = async () => {
     setIsGeneratingState(true);
@@ -72,14 +82,20 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
         previousProgress,
         goals: activeGoals
       });
-      const newPlan = { ...planData, id: Date.now().toString() };
-      setGeneratedPlan(newPlan);
+      if (isMounted.current) {
+        const newPlan = { ...planData, id: Date.now().toString() };
+        setGeneratedPlan(newPlan);
+      }
     } catch (e) {
       console.error("Failed to generate workout plan:", e);
-      setError("Ocurrió un error al generar el plan. Por favor, inténtalo de nuevo.");
+      if (isMounted.current) {
+        setError("Ocurrió un error al generar el plan. Por favor, inténtalo de nuevo.");
+      }
     } finally {
-      setIsGeneratingState(false);
-      setIsGenerating(false);
+      if (isMounted.current) {
+        setIsGeneratingState(false);
+        setIsGenerating(false);
+      }
     }
   };
 
