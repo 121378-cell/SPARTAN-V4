@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,6 +13,7 @@ type Exercise = {
     speed: number[];
     symmetry: number[];
   };
+  videoUrl: string;
 };
 
 type Mistake = {
@@ -54,6 +56,7 @@ export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFo
   const exerciseDatabase: Exercise[] = [
     {
       name: "Sentadilla",
+      videoUrl: "https://videos.pexels.com/video-files/3837489/3837489-hd_1920_1080_25fps.mp4",
       commonMistakes: [
         {
           name: "Valgo de rodillas",
@@ -85,6 +88,7 @@ export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFo
     },
     {
       name: "Press Banca",
+      videoUrl: "https://videos.pexels.com/video-files/8062272/8062272-hd_1920_1080_30fps.mp4",
       commonMistakes: [
         {
           name: "Arqueo excesivo lumbar",
@@ -330,6 +334,25 @@ export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFo
               </Card>
             ) : (
               <>
+                {currentExercise.videoUrl && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Demostración del Ejercicio</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <video
+                        key={currentExercise.name}
+                        width="100%"
+                        controls
+                        className="rounded-lg"
+                        src={currentExercise.videoUrl}
+                        aria-label={`Video de demostración para ${currentExercise.name}`}
+                      >
+                        Tu navegador no soporta el tag de video.
+                      </video>
+                    </CardContent>
+                  </Card>
+                )}
                 {countdown !== null ? (
                   <Card>
                     <CardHeader>
