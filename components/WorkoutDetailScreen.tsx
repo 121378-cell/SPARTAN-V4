@@ -9,9 +9,10 @@ interface WorkoutDetailScreenProps {
     onBack: () => void;
     onComplete: () => void;
     onCheckForm: (exerciseName: string) => void;
+    onEdit: () => void;
 }
 
-export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, onCheckForm }: WorkoutDetailScreenProps) {
+export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, onCheckForm, onEdit }: WorkoutDetailScreenProps) {
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="max-w-4xl mx-auto">
@@ -63,7 +64,7 @@ export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, o
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-end gap-2">
-                        <Button variant="outline" size="default">Editar Plan</Button>
+                        <Button variant="outline" size="default" onClick={onEdit}>Editar Plan</Button>
                         <Button variant="default" size="default" onClick={onComplete}>Marcar como Completado</Button>
                     </CardFooter>
                 </Card>

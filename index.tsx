@@ -14,10 +14,11 @@ import CircadianRhythmPlanner from "./components/CircadianRhythmPlanner";
 import WearableIntegration from "./components/WearableIntegration";
 import BloodTestAnalyzer from "./components/BloodTestAnalyzer";
 import OverloadDetection from "./components/OverloadDetection";
+import WorkoutEditorScreen from "./components/WorkoutEditorScreen";
 
 // App's main component, acts as a router and state manager
 export default function App() {
-  type Screen = 'auth' | 'dashboard' | 'generator' | 'profile' | 'workoutDetail' | 'exerciseFormChecker' | 'recipeGenerator' | 'circadianPlanner' | 'wearableIntegration' | 'bloodTestAnalyzer' | 'overloadDetection';
+  type Screen = 'auth' | 'dashboard' | 'generator' | 'profile' | 'workoutDetail' | 'exerciseFormChecker' | 'recipeGenerator' | 'circadianPlanner' | 'wearableIntegration' | 'bloodTestAnalyzer' | 'overloadDetection' | 'workoutEditor';
   
   const [currentScreen, setCurrentScreen] = useState<Screen>('auth');
   
@@ -84,6 +85,18 @@ export default function App() {
     }
   };
 
+  const handleEditWorkout = () => {
+    if (selectedWorkout) {
+      setCurrentScreen('workoutEditor');
+    }
+  };
+
+  const handleSaveWorkout = (updatedPlan: WorkoutPlan) => {
+    setWorkoutPlans(prevPlans => prevPlans.map(p => p.id === updatedPlan.id ? updatedPlan : p));
+    setSelectedWorkout(updatedPlan);
+    setCurrentScreen('workoutDetail');
+  };
+
   const handleNavigateToRecipes = () => setCurrentScreen('recipeGenerator');
   const handleNavigateToCircadian = () => setCurrentScreen('circadianPlanner');
   const handleNavigateToWearable = () => setCurrentScreen('wearableIntegration');
@@ -137,6 +150,18 @@ export default function App() {
                   onBack={handleBackToDashboardFromDetail}
                   onComplete={handleWorkoutComplete}
                   onCheckForm={handleCheckForm}
+                  onEdit={handleEditWorkout}
+                />;
+
+      case 'workoutEditor':
+        if (!selectedWorkout) {
+            setCurrentScreen('dashboard');
+            return null;
+        }
+        return <WorkoutEditorScreen
+                  initialPlan={selectedWorkout}
+                  onSave={handleSaveWorkout}
+                  onBack={() => setCurrentScreen('workoutDetail')}
                 />;
 
       case 'exerciseFormChecker':
