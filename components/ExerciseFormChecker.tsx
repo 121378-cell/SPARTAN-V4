@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, Progress, Alert, AlertTitle, AlertDescription, Badge } from "./ui";
 import { RotateCcw, AlertTriangle, Check, Video, Activity, Zap, ArrowLeft } from "lucide-react";
 
@@ -39,12 +39,12 @@ type Feedback = {
   timestamp: Date;
 };
 
-interface ExerciseFormCheckerProps {
-    onBack: () => void;
-    exerciseName?: string | null;
-}
+interface ExerciseFormCheckerProps {}
 
-export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFormCheckerProps) {
+export default function ExerciseFormChecker({}: ExerciseFormCheckerProps) {
+  const navigate = useNavigate();
+  const { exerciseName } = useParams<{ exerciseName: string }>();
+
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -287,12 +287,15 @@ export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFo
 
   useEffect(() => {
       if (exerciseName) {
-          const exerciseToStart = exerciseDatabase.find(ex => ex.name.toLowerCase() === exerciseName.toLowerCase());
+          const decodedExerciseName = decodeURIComponent(exerciseName);
+          const exerciseToStart = exerciseDatabase.find(ex => ex.name.toLowerCase() === decodedExerciseName.toLowerCase());
           if (exerciseToStart) {
               startExercise(exerciseToStart);
           }
       }
   }, [exerciseName]);
+  
+  const onBack = () => navigate(-1);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">

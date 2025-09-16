@@ -1,18 +1,32 @@
 "use client";
 
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "./ui";
 import { Clock, Activity } from "lucide-react";
-import type { WorkoutPlan } from '../lib/types';
+import { useAppStore } from "../lib/stores";
 
-interface WorkoutDetailScreenProps {
-    workoutPlan: WorkoutPlan;
-    onBack: () => void;
-    onComplete: () => void;
-    onCheckForm: (exerciseName: string) => void;
-    onEdit: () => void;
-}
+interface WorkoutDetailScreenProps {}
 
-export default function WorkoutDetailScreen({ workoutPlan, onBack, onComplete, onCheckForm, onEdit }: WorkoutDetailScreenProps) {
+export default function WorkoutDetailScreen({}: WorkoutDetailScreenProps) {
+    const navigate = useNavigate();
+    const { workoutId } = useParams<{ workoutId: string }>();
+    const { workoutPlans, addProgressData } = useAppStore();
+    
+    const workoutPlan = workoutPlans.find(p => p.id === workoutId);
+
+    if (!workoutPlan) {
+        // Redirect to dashboard if plan not found
+        return <Navigate to="/dashboard" replace />;
+    }
+    
+    const onBack = () => navigate('/dashboard');
+    const onComplete = () => {
+        addProgressData(workoutPlan.id);
+        navigate('/dashboard');
+    };
+    const onCheckForm = (exerciseName: string) => navigate(`/workout/${workoutId}/check-form/${encodeURIComponent(exerciseName)}`);
+    const onEdit = () => navigate(`/workout/${workoutId}/edit`);
+
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="max-w-4xl mx-auto">

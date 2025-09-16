@@ -39,10 +39,10 @@ export type UserData = {
   notificationSettings: NotificationSettings;
 };
 
-// FIX: Added ProgressData type based on usage in Dashboard.tsx.
+// UPDATED: Changed date to string for easier persistence.
 export type ProgressData = {
   workoutId: string;
-  date: Date;
+  date: string; // ISO Date String
   notes?: string;
 };
 

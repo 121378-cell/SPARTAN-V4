@@ -1,33 +1,36 @@
-
 "use client";
 
+import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label } from "./ui";
 import { Check } from "lucide-react";
 import type { UserData, NotificationSettings } from '../lib/types';
+import { useAppStore } from "../lib/stores";
 
-interface ProfileScreenProps {
-    userData: UserData;
-    setUserData: (data: UserData) => void;
-    onBack: () => void;
-}
+interface ProfileScreenProps {}
 
-export default function ProfileScreen({ userData, setUserData, onBack }: ProfileScreenProps) {
+export default function ProfileScreen({}: ProfileScreenProps) {
+    const navigate = useNavigate();
+    const { userData, setUserData } = useAppStore();
+
+    const handleDataChange = (field: keyof UserData, value: any) => {
+        setUserData({ ...userData, [field]: value });
+    };
+
     const handleGoalToggle = (goal: string) => {
         const newGoals = userData.goals.includes(goal)
             ? userData.goals.filter(g => g !== goal)
             : [...userData.goals, goal];
-        setUserData({ ...userData, goals: newGoals });
+        handleDataChange('goals', newGoals);
     };
 
     const handleNotificationToggle = (setting: keyof NotificationSettings) => {
-        setUserData({
-            ...userData,
-            notificationSettings: {
-                ...userData.notificationSettings,
-                [setting]: !userData.notificationSettings[setting],
-            },
+        handleDataChange('notificationSettings', {
+            ...userData.notificationSettings,
+            [setting]: !userData.notificationSettings[setting],
         });
     };
+    
+    const onBack = () => navigate(-1);
 
     return (
         <div className="min-h-screen bg-gray-50 p-4">
@@ -52,7 +55,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                     <Input
                                         id="name"
                                         value={userData.name}
-                                        onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+                                        onChange={(e) => handleDataChange('name', e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -61,7 +64,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                         id="age"
                                         type="number"
                                         value={userData.age}
-                                        onChange={(e) => setUserData({ ...userData, age: parseInt(e.target.value) || 0 })}
+                                        onChange={(e) => handleDataChange('age', parseInt(e.target.value) || 0)}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -70,7 +73,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                         id="weight"
                                         type="number"
                                         value={userData.weight}
-                                        onChange={(e) => setUserData({ ...userData, weight: parseInt(e.target.value) || 0 })}
+                                        onChange={(e) => handleDataChange('weight', parseInt(e.target.value) || 0)}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -79,7 +82,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                         id="height"
                                         type="number"
                                         value={userData.height}
-                                        onChange={(e) => setUserData({ ...userData, height: parseInt(e.target.value) || 0 })}
+                                        onChange={(e) => handleDataChange('height', parseInt(e.target.value) || 0)}
                                     />
                                 </div>
                             </div>
@@ -93,7 +96,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                             variant={userData.fitnessLevel === level ? 'default' : 'secondary'}
                                             size="sm"
                                             className="rounded-full"
-                                            onClick={() => setUserData({ ...userData, fitnessLevel: level })}
+                                            onClick={() => handleDataChange('fitnessLevel', level)}
                                         >
                                             {level === 'beginner' ? 'Principiante' : level === 'intermediate' ? 'Intermedio' : 'Avanzado'}
                                         </Button>
@@ -110,7 +113,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                                             variant={userData.trainingDays === days ? 'default' : 'secondary'}
                                             size="sm"
                                             className="rounded-full"
-                                            onClick={() => setUserData({ ...userData, trainingDays: days })}
+                                            onClick={() => handleDataChange('trainingDays', days)}
                                         >
                                             {days}
                                         </Button>
@@ -142,7 +145,7 @@ export default function ProfileScreen({ userData, setUserData, onBack }: Profile
                         <CardHeader>
                             <CardTitle>Ajustes de Notificaciones</CardTitle>
                             <CardDescription>Gestiona tus recordatorios</CardDescription>
-                        </CardHeader>
+                        </Header>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between p-3 border rounded-lg">
                                 <Label htmlFor="workout-notif">Recordatorios de Entrenamiento</Label>

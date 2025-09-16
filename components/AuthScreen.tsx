@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label } from "./ui";
 import { Logo } from "./Logo";
+import { useAppStore } from "../lib/stores";
 
-interface AuthScreenProps {
-    onLoginSuccess: () => void;
-}
-
-export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
+export default function AuthScreen() {
+    const navigate = useNavigate();
+    const login = useAppStore(state => state.login);
     const [authView, setAuthView] = useState<'login' | 'register'>('login');
     const [authForm, setAuthForm] = useState({
         email: '',
@@ -22,7 +22,8 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
             alert("¡Las contraseñas no coinciden!");
             return;
         }
-        onLoginSuccess();
+        login();
+        navigate('/dashboard', { replace: true });
     };
 
     return (

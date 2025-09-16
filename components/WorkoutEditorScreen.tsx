@@ -1,53 +1,65 @@
-
 "use client";
 
 import { useState } from "react";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from "./ui";
 import { Trash2, Plus } from "lucide-react";
-import type { WorkoutPlan, DayPlan, Exercise } from '../lib/types';
+import type { WorkoutPlan, Exercise } from '../lib/types';
+import { useAppStore } from "../lib/stores";
 
-interface WorkoutEditorScreenProps {
-    initialPlan: WorkoutPlan;
-    onSave: (updatedPlan: WorkoutPlan) => void;
-    onBack: () => void;
-}
+interface WorkoutEditorScreenProps {}
 
-export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: WorkoutEditorScreenProps) {
-    const [plan, setPlan] = useState<WorkoutPlan>(initialPlan);
+export default function WorkoutEditorScreen({}: WorkoutEditorScreenProps) {
+    const navigate = useNavigate();
+    const { workoutId } = useParams<{ workoutId: string }>();
+    const { workoutPlans, updateWorkoutPlan } = useAppStore();
+
+    const initialPlan = workoutPlans.find(p => p.id === workoutId);
+
+    const [plan, setPlan] = useState<WorkoutPlan | undefined>(initialPlan);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    if (!plan) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
     const handlePlanChange = (field: 'name' | 'description', value: string) => {
-        setPlan(prev => ({ ...prev, [field]: value }));
+        setPlan(prev => prev ? { ...prev, [field]: value } : undefined);
     };
 
     const handleDayChange = (dayIndex: number, field: 'focus', value: string) => {
+        if (!plan) return;
         const newDays = [...plan.days];
         newDays[dayIndex] = { ...newDays[dayIndex], [field]: value };
-        setPlan(prev => ({ ...prev, days: newDays }));
+        setPlan(prev => prev ? { ...prev, days: newDays } : undefined);
     };
 
     const handleExerciseChange = (dayIndex: number, exIndex: number, field: keyof Exercise, value: string | number) => {
+        if (!plan) return;
         const newDays = [...plan.days];
         const newExercises = [...newDays[dayIndex].exercises];
         newExercises[exIndex] = { ...newExercises[exIndex], [field]: value };
         newDays[dayIndex].exercises = newExercises;
-        setPlan(prev => ({ ...prev, days: newDays }));
+        setPlan(prev => prev ? { ...prev, days: newDays } : undefined);
     };
     
     const addExercise = (dayIndex: number) => {
+        if (!plan) return;
         const newExercise: Exercise = { name: "Nuevo Ejercicio", sets: 3, reps: "10", rest: 60, equipment: "Ninguno" };
         const newDays = [...plan.days];
         newDays[dayIndex].exercises.push(newExercise);
-        setPlan(prev => ({ ...prev, days: newDays }));
+        setPlan(prev => prev ? { ...prev, days: newDays } : undefined);
     };
 
     const removeExercise = (dayIndex: number, exIndex: number) => {
+        if (!plan) return;
         const newDays = [...plan.days];
         newDays[dayIndex].exercises.splice(exIndex, 1);
-        setPlan(prev => ({ ...prev, days: newDays }));
+        setPlan(prev => prev ? { ...prev, days: newDays } : undefined);
     };
     
     const handleSaveChanges = () => {
+        if (!plan) return;
         const newErrors: Record<string, string> = {};
         plan.days.forEach((day, dayIndex) => {
             day.exercises.forEach((ex, exIndex) => {
@@ -62,7 +74,8 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            onSave(plan);
+            updateWorkoutPlan(plan);
+            navigate(`/workout/${plan.id}`);
         }
     };
 
@@ -72,7 +85,7 @@ export default function WorkoutEditorScreen({ initialPlan, onSave, onBack }: Wor
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-2xl font-bold">Editar Plan de Entrenamiento</h1>
                     <div>
-                        <Button variant="outline" size="default" onClick={onBack} className="mr-2">
+                        <Button variant="outline" size="default" onClick={() => navigate(-1)} className="mr-2">
                             Cancelar
                         </Button>
                         <Button variant="default" size="default" onClick={handleSaveChanges}>

@@ -1,25 +1,13 @@
 "use client";
 
+import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, Badge } from "./ui";
 import { User, Settings, Plus, Utensils, Clock, Zap, Droplets, StretchHorizontal, Heart, ClipboardList, BarChart, CheckCircle, ArrowRight, Ruler, Flame } from "lucide-react";
-import type { UserData, WorkoutPlan, ProgressData } from '../lib/types';
+import type { WorkoutPlan } from '../lib/types';
+import { useAppStore } from "../lib/stores";
 import { Logo } from "./Logo";
 
-interface DashboardProps {
-    userData: UserData;
-    workoutPlans: WorkoutPlan[];
-    progressData: ProgressData[];
-    onGenerateWorkout: () => void;
-    isGeneratingWorkout: boolean;
-    onSelectWorkout: (plan: WorkoutPlan) => void;
-    onProfileClick: () => void;
-    onNavigateToRecipes: () => void;
-    onNavigateToCircadian: () => void;
-    onNavigateToWearable: () => void;
-    onNavigateToBloodTestAnalyzer: () => void;
-    onNavigateToOverloadDetection: () => void;
-    onNavigateToBodyMeasurement: () => void;
-}
+interface DashboardProps {}
 
 const StatCard = ({ icon, title, value, subtitle }: { icon: React.ReactNode, title: string, value: string, subtitle?: string }) => (
     <Card>
@@ -56,31 +44,19 @@ const ToolCard = ({ icon, title, description, onClick }: { icon: React.ReactNode
     </Card>
 );
 
-export default function Dashboard({
-    userData,
-    workoutPlans,
-    progressData,
-    onGenerateWorkout,
-    isGeneratingWorkout,
-    onSelectWorkout,
-    onProfileClick,
-    onNavigateToRecipes,
-    onNavigateToCircadian,
-    onNavigateToWearable,
-    onNavigateToBloodTestAnalyzer,
-    onNavigateToOverloadDetection,
-    onNavigateToBodyMeasurement,
-}: DashboardProps) {
+export default function Dashboard(props: DashboardProps) {
+    const navigate = useNavigate();
+    const { userData, workoutPlans, progressData, isGenerating: isGeneratingWorkout } = useAppStore();
     
     const nextWorkout = workoutPlans.length > 0 ? workoutPlans[0] : null;
 
     const tools = [
-        { icon: <Utensils className="h-6 w-6" />, title: "Planifica tu Nutrición", description: "Genera recetas inteligentes según tus objetivos de macros.", onClick: onNavigateToRecipes },
-        { icon: <Clock className="h-6 w-6" />, title: "Optimizador Circadiano", description: "Sincroniza tu estilo de vida con tu reloj biológico.", onClick: onNavigateToCircadian },
-        { icon: <Zap className="h-6 w-6" />, title: "Integración con Wearables", description: "Conecta tus dispositivos para obtener información detallada.", onClick: onNavigateToWearable },
-        { icon: <Droplets className="h-6 w-6" />, title: "Análisis de Sangre", description: "Obtén información de tus análisis con IA.", onClick: onNavigateToBloodTestAnalyzer },
-        { icon: <StretchHorizontal className="h-6 w-6" />, title: "Detección de Sobrecarga", description: "Identifica la tensión y obtén ejercicios correctivos.", onClick: onNavigateToOverloadDetection },
-        { icon: <Ruler className="h-6 w-6" />, title: "Medidas Corporales", description: "Realiza un seguimiento de tu progreso físico con mediciones detalladas.", onClick: onNavigateToBodyMeasurement },
+        { icon: <Utensils className="h-6 w-6" />, title: "Planifica tu Nutrición", description: "Genera recetas inteligentes según tus objetivos de macros.", onClick: () => navigate('/recipes') },
+        { icon: <Clock className="h-6 w-6" />, title: "Optimizador Circadiano", description: "Sincroniza tu estilo de vida con tu reloj biológico.", onClick: () => navigate('/circadian') },
+        { icon: <Zap className="h-6 w-6" />, title: "Integración con Wearables", description: "Conecta tus dispositivos para obtener información detallada.", onClick: () => navigate('/wearable') },
+        { icon: <Droplets className="h-6 w-6" />, title: "Análisis de Sangre", description: "Obtén información de tus análisis con IA.", onClick: () => navigate('/blood-test') },
+        { icon: <StretchHorizontal className="h-6 w-6" />, title: "Detección de Sobrecarga", description: "Identifica la tensión y obtén ejercicios correctivos.", onClick: () => navigate('/overload') },
+        { icon: <Ruler className="h-6 w-6" />, title: "Medidas Corporales", description: "Realiza un seguimiento de tu progreso físico con mediciones detalladas.", onClick: () => navigate('/measurements') },
     ];
 
     return (
@@ -95,7 +71,7 @@ export default function Dashboard({
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" onClick={onProfileClick}>
+                        <Button variant="ghost" size="icon" onClick={() => navigate('/profile')}>
                             <User className="h-5 w-5" />
                         </Button>
                         <Button variant="ghost" size="icon">
@@ -116,7 +92,7 @@ export default function Dashboard({
                                 <CardTitle className="text-2xl mt-1">{nextWorkout.name}</CardTitle>
                                 <p className="mt-2 text-sm text-primary-foreground/80 line-clamp-2">{nextWorkout.description}</p>
                                 <div className="flex items-center gap-2 mt-4">
-                                    <Button variant="secondary" size="lg" onClick={() => onSelectWorkout(nextWorkout)}>
+                                    <Button variant="secondary" size="lg" onClick={() => navigate(`/workout/${nextWorkout.id}`)}>
                                         Comenzar Entrenamiento
                                     </Button>
                                     <Button
@@ -134,7 +110,7 @@ export default function Dashboard({
                             <>
                                 <CardTitle className="text-2xl">¡Bienvenido a tu viaje de fitness!</CardTitle>
                                 <p className="mt-2 text-sm text-primary-foreground/80">Genera tu primer plan de entrenamiento personalizado con IA para empezar.</p>
-                                <Button variant="secondary" size="lg" className="mt-4" onClick={onGenerateWorkout} disabled={isGeneratingWorkout}>
+                                <Button variant="secondary" size="lg" className="mt-4" onClick={() => navigate('/generator')} disabled={isGeneratingWorkout}>
                                     {isGeneratingWorkout ? 'Generando...' : 'Generar Nuevo Plan'}
                                 </Button>
                             </>
@@ -170,7 +146,7 @@ export default function Dashboard({
                 <div className="space-y-4">
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold">Mis Planes de Entrenamiento</h2>
-                        <Button onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="outline" size="sm">
+                        <Button onClick={() => navigate('/generator')} disabled={isGeneratingWorkout} variant="outline" size="sm">
                             <Plus className="mr-2 h-4 w-4" />
                             Nuevo Plan
                         </Button>
@@ -181,7 +157,7 @@ export default function Dashboard({
                                 <Card 
                                     key={plan.id} 
                                     className="min-w-[250px] cursor-pointer hover:shadow-lg transition-shadow flex-shrink-0"
-                                    onClick={() => onSelectWorkout(plan)}
+                                    onClick={() => navigate(`/workout/${plan.id}`)}
                                 >
                                     <CardHeader className="p-4">
                                         <CardTitle className="text-base truncate">{plan.name}</CardTitle>
@@ -199,7 +175,7 @@ export default function Dashboard({
                         <Card>
                             <CardContent className="py-8 text-center">
                                 <p className="text-muted-foreground">Aún no tienes planes de entrenamiento.</p>
-                                <Button className="mt-3" onClick={onGenerateWorkout} disabled={isGeneratingWorkout} variant="default" size="default">
+                                <Button className="mt-3" onClick={() => navigate('/generator')} disabled={isGeneratingWorkout} variant="default" size="default">
                                     {isGeneratingWorkout ? 'Generando...' : 'Crea tu Primer Plan'}
                                 </Button>
                             </CardContent>
@@ -226,12 +202,12 @@ export default function Dashboard({
                                 {[...progressData].reverse().map((progress) => {
                                     const workout = workoutPlans.find(w => w.id === progress.workoutId);
                                     return (
-                                        <div key={progress.date.toISOString()} className="flex justify-between items-center p-3 bg-secondary rounded-lg">
+                                        <div key={progress.date} className="flex justify-between items-center p-3 bg-secondary rounded-lg">
                                             <div className="flex items-center gap-3">
                                                 <CheckCircle className="h-5 w-5 text-green-600" />
                                                 <div>
                                                     <p className="font-semibold">{workout?.name || 'Entrenamiento'}</p>
-                                                    <p className="text-sm text-muted-foreground">{progress.date.toLocaleDateString()}</p>
+                                                    <p className="text-sm text-muted-foreground">{new Date(progress.date).toLocaleDateString()}</p>
                                                 </div>
                                             </div>
                                             <Badge variant="outline">Completado</Badge>

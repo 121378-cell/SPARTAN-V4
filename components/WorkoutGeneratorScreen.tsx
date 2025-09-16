@@ -1,23 +1,20 @@
-
-
-
-
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { generateMultiGoalWorkoutPlanApi } from "../lib/api";
 import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays, WorkoutPlan } from "../lib/types";
+import { useAppStore } from "../lib/stores";
 import GeneratorForm from "./GeneratorForm";
 import PlanDisplay from "./PlanDisplay";
 import { Button } from "./ui";
 
-interface WorkoutGeneratorScreenProps {
-    onPlanGenerated: (plan: WorkoutPlan) => void;
-    onBack: () => void;
-    setIsGenerating: (isGenerating: boolean) => void;
-}
+interface WorkoutGeneratorScreenProps {}
 
-export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsGenerating }: WorkoutGeneratorScreenProps) {
+export default function WorkoutGeneratorScreen({}: WorkoutGeneratorScreenProps) {
+  const navigate = useNavigate();
+  const { addWorkoutPlan, setIsGenerating } = useAppStore();
+
   // State for the form inputs
   const [level, setLevel] = useState<TrainingLevel>('intermediate');
   const [availableDays, setAvailableDays] = useState<TrainingDays>(3);
@@ -117,7 +114,8 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
 
   const handleSavePlan = () => {
       if (generatedPlan) {
-          onPlanGenerated(generatedPlan);
+          addWorkoutPlan(generatedPlan);
+          navigate('/dashboard');
       }
   };
 
@@ -140,7 +138,7 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Generador de Rutinas</h1>
-            <Button variant="outline" size="default" onClick={onBack}>Volver al Dashboard</Button>
+            <Button variant="outline" size="default" onClick={() => navigate('/dashboard')}>Volver al Dashboard</Button>
         </div>
         
         <div className="grid gap-8 md:grid-cols-3">

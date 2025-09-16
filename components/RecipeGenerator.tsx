@@ -1,19 +1,17 @@
-
-
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Input, Label, Badge, Alert, AlertTitle, AlertDescription } from "./ui";
 import { Check, Clock, ShoppingCart, Utensils, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import type { MacroGoals, Recipe, ShoppingListItem } from "../lib/types";
 import { generateRecipesApi } from "../lib/api";
 
 
-interface RecipeGeneratorProps {
-    onBack: () => void;
-}
+interface RecipeGeneratorProps {}
 
-export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
+export default function RecipeGenerator({}: RecipeGeneratorProps) {
+  const navigate = useNavigate();
   const [macroGoals, setMacroGoals] = useState<MacroGoals>({
     calories: 2000,
     protein: 150,
@@ -128,7 +126,7 @@ export default function RecipeGenerator({ onBack }: RecipeGeneratorProps) {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Generador de Recetas Inteligente</h1>
-            <Button variant="outline" size="default" onClick={onBack}>
+            <Button variant="outline" size="default" onClick={() => navigate('/dashboard')}>
                 Volver al Dashboard
             </Button>
         </div>
