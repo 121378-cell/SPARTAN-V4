@@ -1,5 +1,7 @@
 
 
+
+
 "use client";
 
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea } from "./ui";
@@ -163,7 +165,7 @@ export default function GeneratorForm({
                 </CardContent>
             </Card>
 
-             <Card>
+             <Card className={formErrors.primaryGoal ? 'border-red-500' : ''}>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Star className="h-5 w-5" />
@@ -339,6 +341,7 @@ export default function GeneratorForm({
                                 placeholder="Ej: Dolor lumbar crónico..."
                                 value={injuryHistory.injuries}
                                 onChange={(e) => setInjuryHistory({ ...injuryHistory, injuries: e.target.value })}
+                                className={formErrors.injuries ? 'border-red-500' : ''}
                             />
                             {formErrors.injuries && <p className="text-sm text-red-600 mt-1">{formErrors.injuries}</p>}
                         </div>

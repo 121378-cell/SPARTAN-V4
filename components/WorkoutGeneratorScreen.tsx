@@ -1,6 +1,7 @@
 
 
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -61,16 +62,9 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
 
 
   const handleGeneratePlan = async () => {
-    setIsGeneratingState(true);
-    setIsGenerating(true);
     setFormErrors({});
-    setError(null);
-    setGeneratedPlan(null);
-
-    const activeGoals = Object.entries(goals)
-      .filter(([_, selected]) => selected)
-      .map(([goal]) => goal);
     
+    // Validar formulario
     const newErrors: Record<string, string> = {};
     if (!primaryGoal) {
         newErrors.primaryGoal = "Por favor, selecciona un objetivo principal.";
@@ -81,11 +75,18 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
 
     if (Object.keys(newErrors).length > 0) {
         setFormErrors(newErrors);
-        setIsGeneratingState(false);
-        setIsGenerating(false);
         return;
     }
 
+    setIsGeneratingState(true);
+    setIsGenerating(true);
+    setError(null);
+    setGeneratedPlan(null);
+
+    const activeGoals = Object.entries(goals)
+      .filter(([_, selected]) => selected)
+      .map(([goal]) => goal);
+    
     try {
       const planData = await generateMultiGoalWorkoutPlanApi({
         level,
