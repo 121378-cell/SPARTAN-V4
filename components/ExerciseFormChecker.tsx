@@ -117,6 +117,81 @@ export default function ExerciseFormChecker({ onBack, exerciseName }: ExerciseFo
         speed: [0.5, 0.9], // m/s
         symmetry: [90, 100] // % simetría izquierda/derecha
         }
+    },
+    {
+      name: "Peso Muerto",
+      videoUrl: "https://videos.pexels.com/video-files/5377545/5377545-hd_1080_1920_25fps.mp4",
+      commonMistakes: [
+        {
+          name: "Espalda redondeada",
+          description: "La espalda baja se curva durante el levantamiento, perdiendo la neutralidad.",
+          correction: "Activar el core, mantener el pecho erguido, y asegurar la retracción escapular.",
+          severity: 'high',
+          sensorsDetected: ['cámara', 'EMG lumbar']
+        },
+        {
+          name: "Tirar con los brazos",
+          description: "Iniciar el movimiento flexionando los codos en lugar de empujar con las piernas.",
+          correction: "Mantener los brazos rectos como \"ganchos\", pensar en empujar el suelo con los pies.",
+          severity: 'medium',
+          sensorsDetected: ['cámara', 'IMU codo']
+        }
+      ],
+      optimalRange: {
+        jointAngles: [160, 170, 90],
+        speed: [0.6, 1.0],
+        symmetry: [90, 100]
+      }
+    },
+    {
+      name: "Remo con Barra",
+      videoUrl: "https://videos.pexels.com/video-files/6932908/6932908-hd_1920_1080_25fps.mp4",
+      commonMistakes: [
+        {
+          name: "Impulso excesivo",
+          description: "Mover el torso arriba y abajo para levantar el peso.",
+          correction: "Mantener el torso estable y paralelo al suelo. Reducir el peso si es necesario.",
+          severity: 'medium',
+          sensorsDetected: ['cámara', 'IMU cadera']
+        },
+        {
+          name: "Codos abiertos",
+          description: "Los codos se alejan del cuerpo en lugar de moverse hacia atrás.",
+          correction: "Mantener los codos cerca del torso, enfocarse en apretar los omóplatos.",
+          severity: 'low',
+          sensorsDetected: ['cámara', 'IMU hombro']
+        }
+      ],
+      optimalRange: {
+        jointAngles: [45, 90, 90],
+        speed: [0.7, 1.1],
+        symmetry: [88, 100]
+      }
+    },
+    {
+      name: "Press Militar",
+      videoUrl: "https://videos.pexels.com/video-files/8062275/8062275-hd_1920_1080_30fps.mp4",
+      commonMistakes: [
+        {
+          name: "Arqueo lumbar excesivo",
+          description: "Hiperextender la espalda baja para empujar el peso hacia arriba.",
+          correction: "Apretar los glúteos y el abdomen para mantener la pelvis neutra.",
+          severity: 'high',
+          sensorsDetected: ['cámara', 'EMG lumbar']
+        },
+        {
+          name: "Recorrido incompleto",
+          description: "No extender completamente los brazos en la parte superior del movimiento.",
+          correction: "Asegurar un bloqueo completo en la parte superior, con la cabeza \"a través\" de los brazos.",
+          severity: 'medium',
+          sensorsDetected: ['cámara', 'IMU codo']
+        }
+      ],
+      optimalRange: {
+        jointAngles: [170, 175, 180],
+        speed: [0.5, 0.9],
+        symmetry: [90, 100]
+      }
     }
   ];
 
