@@ -17,10 +17,40 @@ interface GenerationParams {
 export const generateMultiGoalWorkoutPlanApi = async (params: GenerationParams): Promise<Omit<WorkoutPlan, 'id'>> => {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    const availableEquipment = Object.entries(params.equipment)
-        .filter(([_, value]) => value)
-        .map(([key]) => key)
-        .join(', ') || 'ninguno';
+    const equipmentParts: string[] = [];
+    
+    if (params.equipment.dumbbells.available) {
+        let dumbbellDesc = 'mancuernas';
+        if (params.equipment.dumbbells.type !== 'none') {
+            const typeTranslation = { adjustable: 'ajustables', fixed: 'de peso fijo' };
+            dumbbellDesc += ` (${typeTranslation[params.equipment.dumbbells.type]})`;
+        }
+        equipmentParts.push(dumbbellDesc);
+    }
+    
+    if (params.equipment.barbell.available) {
+        let barbellDesc = 'barra';
+        if (params.equipment.barbell.type !== 'none') {
+            const typeTranslation = { olympic: 'olímpica', standard: 'estándar' };
+            barbellDesc += ` (${typeTranslation[params.equipment.barbell.type]})`;
+        }
+        equipmentParts.push(barbellDesc);
+    }
+
+    (Object.keys(params.equipment) as Array<keyof typeof params.equipment>).forEach(key => {
+        if (key !== 'dumbbells' && key !== 'barbell' && params.equipment[key]) {
+            const keyTranslation: Record<string, string> = {
+                kettlebells: 'kettlebells',
+                resistanceBands: 'bandas de resistencia',
+                pullUpBar: 'barra de dominadas',
+                bench: 'banco',
+                machine: 'máquinas de gimnasio'
+            };
+            equipmentParts.push(keyTranslation[key] || key);
+        }
+    });
+
+    const availableEquipment = equipmentParts.join(', ') || 'ninguno';
 
     const injuryInfo = params.injuryHistory.hasInjuries 
         ? `El usuario tiene las siguientes lesiones a considerar: ${params.injuryHistory.injuries}. Por favor, proporciona alternativas seguras y modificaciones.`

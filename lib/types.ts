@@ -1,8 +1,11 @@
 export type TrainingLevel = 'beginner' | 'intermediate' | 'advanced';
 export type TrainingLocation = 'gym' | 'home' | 'outdoor';
+export type DumbbellType = 'adjustable' | 'fixed' | 'none';
+export type BarbellType = 'olympic' | 'standard' | 'none';
+
 export type Equipment = {
-  dumbbells: boolean;
-  barbell: boolean;
+  dumbbells: { available: boolean; type: DumbbellType };
+  barbell: { available: boolean; type: BarbellType };
   kettlebells: boolean;
   resistanceBands: boolean;
   pullUpBar: boolean;

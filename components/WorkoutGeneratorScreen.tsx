@@ -1,5 +1,6 @@
 
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -21,8 +22,8 @@ export default function WorkoutGeneratorScreen({ onPlanGenerated, onBack, setIsG
   const [availableDays, setAvailableDays] = useState<TrainingDays>(3);
   const [trainingLocation, setTrainingLocation] = useState<TrainingLocation>('gym');
   const [equipment, setEquipment] = useState<Equipment>({
-    dumbbells: true,
-    barbell: true,
+    dumbbells: { available: true, type: 'fixed' },
+    barbell: { available: true, type: 'olympic' },
     kettlebells: false,
     resistanceBands: false,
     pullUpBar: true,

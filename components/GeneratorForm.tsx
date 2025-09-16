@@ -4,7 +4,7 @@
 
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea } from "./ui";
 import { Dumbbell, Gauge, MoveRight, AlertTriangle, Star } from "lucide-react";
-import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays } from "../lib/types";
+import type { TrainingLevel, TrainingLocation, Equipment, InjuryHistory, TrainingDays, DumbbellType, BarbellType } from "../lib/types";
 // FIX: Import Dispatch and SetStateAction to correctly type the setGoals prop.
 import type { Dispatch, SetStateAction } from "react";
 
@@ -16,7 +16,7 @@ interface GeneratorFormProps {
     trainingLocation: TrainingLocation;
     setTrainingLocation: (location: TrainingLocation) => void;
     equipment: Equipment;
-    setEquipment: (equipment: Equipment) => void;
+    setEquipment: (equipment: Equipment | ((prev: Equipment) => Equipment)) => void;
     injuryHistory: InjuryHistory;
     setInjuryHistory: (history: InjuryHistory) => void;
     previousProgress: string;
@@ -39,6 +39,15 @@ const goalLabels: Record<string, string> = {
     endurance: 'Resistencia',
     cardio: 'Salud Cardiovascular',
 };
+
+const equipmentLabels: Record<string, string> = {
+    kettlebells: 'Kettlebells',
+    resistanceBands: 'Bandas Resistencia',
+    pullUpBar: 'Barra Dominadas',
+    bench: 'Banco',
+    machine: 'Máquinas',
+};
+
 
 export default function GeneratorForm({
     level, setLevel,
@@ -66,8 +75,27 @@ export default function GeneratorForm({
         setGoals({ ...goals, [goal]: !goals[goal] });
     };
 
-    const toggleEquipment = (equip: keyof Equipment) => {
-        setEquipment({ ...equipment, [equip]: !equipment[equip] });
+    const toggleSimpleEquipment = (equip: keyof Omit<Equipment, 'dumbbells' | 'barbell'>) => {
+        setEquipment(prev => ({ ...prev, [equip]: !prev[equip] }));
+    };
+
+    const toggleComplexEquipment = (equip: 'dumbbells' | 'barbell') => {
+        setEquipment(prev => ({
+            ...prev,
+            [equip]: {
+                ...prev[equip],
+                available: !prev[equip].available,
+                type: !prev[equip].available ? (equip === 'dumbbells' ? 'fixed' : 'olympic') : 'none'
+            }
+        }));
+    };
+    
+    const setDumbbellType = (type: DumbbellType) => {
+        setEquipment(prev => ({ ...prev, dumbbells: { ...prev.dumbbells, type }}));
+    };
+
+    const setBarbellType = (type: BarbellType) => {
+        setEquipment(prev => ({ ...prev, barbell: { ...prev.barbell, type }}));
     };
 
     return (
@@ -201,20 +229,89 @@ export default function GeneratorForm({
                         Equipamiento Disponible
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-2">
-                    {Object.keys(equipment).map((equip) => (
+                <CardContent className="space-y-4">
+                    {/* Dumbbells */}
+                    <div>
                         <Button
-                            key={equip}
-                            variant={equipment[equip as keyof Equipment] ? 'default' : 'outline'}
+                            variant={equipment.dumbbells.available ? 'default' : 'outline'}
                             size="sm"
-                            onClick={() => toggleEquipment(equip as keyof Equipment)}
-                            className="capitalize"
+                            onClick={() => toggleComplexEquipment('dumbbells')}
+                            className="w-full justify-start capitalize"
                         >
-                            {equip.replace(/([A-Z])/g, ' $1').trim()}
+                            Mancuernas
                         </Button>
-                    ))}
+                        {equipment.dumbbells.available && (
+                            <div className="pl-4 mt-2 space-y-2 border-l-2 ml-2">
+                                <Label className="text-xs text-muted-foreground">Tipo de Mancuernas</Label>
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant={equipment.dumbbells.type === 'fixed' ? 'secondary' : 'ghost'}
+                                        onClick={() => setDumbbellType('fixed')}
+                                    >
+                                        Peso Fijo
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant={equipment.dumbbells.type === 'adjustable' ? 'secondary' : 'ghost'}
+                                        onClick={() => setDumbbellType('adjustable')}
+                                    >
+                                        Ajustables
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    {/* Barbell */}
+                    <div>
+                        <Button
+                            variant={equipment.barbell.available ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => toggleComplexEquipment('barbell')}
+                            className="w-full justify-start capitalize"
+                        >
+                            Barra
+                        </Button>
+                        {equipment.barbell.available && (
+                            <div className="pl-4 mt-2 space-y-2 border-l-2 ml-2">
+                                <Label className="text-xs text-muted-foreground">Tipo de Barra</Label>
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant={equipment.barbell.type === 'olympic' ? 'secondary' : 'ghost'}
+                                        onClick={() => setBarbellType('olympic')}
+                                    >
+                                        Olímpica
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant={equipment.barbell.type === 'standard' ? 'secondary' : 'ghost'}
+                                        onClick={() => setBarbellType('standard')}
+                                    >
+                                        Estándar
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Other Equipment */}
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                        {(Object.keys(equipment) as Array<keyof Equipment>).filter(k => k !== 'dumbbells' && k !== 'barbell').map((equip) => (
+                            <Button
+                                key={equip}
+                                variant={equipment[equip as keyof Omit<Equipment, 'dumbbells' | 'barbell'>] ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => toggleSimpleEquipment(equip as keyof Omit<Equipment, 'dumbbells' | 'barbell'>)}
+                                className="capitalize"
+                            >
+                                {equipmentLabels[equip] || equip}
+                            </Button>
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
+
 
             <Card>
                 <CardHeader>
